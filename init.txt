@@ -1,0 +1,37 @@
+Initialization file for YARL
+Any line that does not start with a '[' is a comment.  Lines that do are data entries.  Data entries MUST be of the format [ENTRYNAME:ENTRYVALUE] (no spaces) or they will not be read correctly!
+
+Window resolution
+
+[WINDOWWIDTH:1024]
+[WINDOWHEIGHT:768]
+
+
+
+Fonts
+Pick any font found in ./fonts.  Make sure the font attributes match the tags in the font name in GAMEFONT, or the game might display strangely.
+
+[GAMEFONT:consolas12x12_gs_tc.png]
+[FONTWIDTH:12]
+[FONTHEIGHT:12]
+[GREYSCALE:true] 'true' if the first tag is 'gs', 'false' otherwise
+[FONTLAYOUT:tc] put the second tag here.  Can be 'as', 'ro', or 'tc' (without the quotes)
+       
+
+
+
+Renderer - which renderer the game uses.  Possible values are:
+GLSL   : works only on video cards with pixel shaders
+OPENGL : works on all video cards supporting OpenGL 1.4
+SDL    : should work everywhere!
+If the game does not display properly, runs slowly, or shows nothing but a black screen on startup, try changing this value. 
+
+[RENDERER:SDL]
+
+
+
+Log size - how many messages the game message log will hold in memory.  Increased log size will result in larger save games.
+
+[LOGSIZE:500]
+
+[LIGHTFLICKER:false] make 'true' if you want lights to flicker like realistic torches. 'false' by default.

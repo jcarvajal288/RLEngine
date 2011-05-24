@@ -1,0 +1,41 @@
+/*
+ * If a tile has multiple characters in its charSet, then duplicate
+ * tiles for each character are made, each having one of the characters
+ * in the set.  A pointer pointing to different charactered tiles in the
+ * set can be incremented to point at the proper index.
+ */
+
+Terrain "grass"
+{
+    type = "Floor"
+    bgColor = "#00AA00"
+    fgColor = "#00FF00"
+    charSet = [13, 34, 39, 44, 46]
+    transparent
+}
+
+Terrain "stone tile floor"
+{
+    type = "Floor"
+    bgColor = "#555555"
+    fgColor = "#888888"
+    charSet = [43]
+    transparent
+}
+
+Terrain "dirt wall"
+{
+    type = "Solid"
+    bgColor = "#71593F"
+    fgColor = "#555555"
+    charSet = [176]
+}
+
+Terrain "worked stone wall"
+{
+    type = "Solid"
+    bgColor = "#555555"
+    fgColor = "#888888"
+    charSet = [10, 205, 186, 187, 201, 188, 200, 185, 204, 202, 203, 206] 
+    directionallyLinked
+}

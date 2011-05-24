@@ -1,0 +1,14 @@
+# ignore executables
+release
+debug
+e_fence
+
+# ignore object files
+*.o
+
+# ignore save games
+*.sav
+
+# ignore vim backup files and swap files
+*~
+*.swp

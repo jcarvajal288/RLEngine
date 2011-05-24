@@ -1,0 +1,23 @@
+Dungeon "Castle"
+{
+    floorTile = 300 // stone tile floor
+    wallTile =  310 // worked stone wall
+    fillerTile = 200 // dirt wall
+
+    upStair = 302
+    downStair = 303
+
+    n_s_Door = 400
+    e_w_Door = 402
+
+    ambientLight = 0.0
+
+    mapWidth = 100
+    mapHeight = 100
+
+    recurseLevel = 6
+    minHSize = 15  
+    minVSize = 15
+    maxHRatio = 1.5
+    maxVRatio = 1.5
+}

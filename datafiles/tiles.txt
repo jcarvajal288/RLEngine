@@ -1,0 +1,211 @@
+/*
+Explaining feature.txt:
+
+(M) indicates a mandatory property, (O) indicates an optional one
+
+Tile "Name of Tile"
+{
+    id (M) = number uniquely identifying this feature type.  This is the Tile's
+             index into Tile::list.  It is not stored with the Tile, but is
+             used for error checking during parsing.
+    char (M) = character to display on the map.
+    charSet (O)) = contains the characters to display for a tile that is directionally linked
+                  or randomly linked.
+    shortdesc (M) = a short description used when examining this feature
+    longdesc (M) = a longer, possibly more flowerly description used for flavor
+    bgColor (O) = background color of the feature's tile.  If not specified, 
+                  the background color of the tile under it will be used.
+    fgColor (O) = foreground color of the feature's tile.  If not specified, 
+                  the foreground color of the tile under it will be used.
+
+    // flags
+    blocksLight = feature blocks light
+    blocksWalk = feature blocks walking
+    directionallyLinked = whether the tile's character changes based on similar tiles around it (Walls generally do this)
+    notable = whether the player is notified when they walk over this tile.
+
+    // actions
+    actions take the form of "onFoo".  The number that follows indicates the id 
+    of the feature that the current feature should turn into on that action.
+    All actions are optional properties.
+    Possible actions:
+        onOpen
+}
+
+*/
+
+
+Tile "Grass"
+{
+    id = 100
+    charSet = [46] // '.'
+    shortdesc = "grass"
+    longdesc = "a patch of grass"
+    bgColor = "#00AA00"
+    fgColor = "#00FF00"
+}
+
+Tile "High Grass"
+{
+    id = 101
+    charSet = [58] // ':'
+    shortdesc = "high grass"
+    longdesc = "a patch of high grass"
+    bgColor = "#00AA00"
+    fgColor = "#00FF00"
+}
+
+Tile "Dirt Wall"
+{
+    id = 200
+    charSet = [176] // lightly filled square
+    shortdesc = "a dirt wall"
+    longdesc = "rough, hard packed dirt wall"
+    bgColor = "#71593F"
+    fgColor = "#555555"
+
+    // flags
+    blocksLight
+    blocksWalk
+}
+
+Tile "Stone Tile Floor"
+{
+    id = 300
+    charSet = [43] // '+'
+    shortdesc = "a stone tile floor"
+    longdesc = "floor constructed of square, gray tiles"
+    bgColor = "#555555"
+    fgColor = "#888888"
+}
+
+Tile "Worked Stone Wall"
+{
+    id = 310
+    charSet = [10, 205, 186, 187, 201, 188, 200, 185, 204, 202, 203, 206] 
+    shortdesc = "a worked stone wall"
+    longdesc = "worked stone wall constructed by large, smooth bricks"
+    bgColor = "#555555"
+    fgColor = "#888888"
+
+    // flags
+    directionallyLinked
+    blocksLight
+    blocksWalk
+}
+
+
+Tile "Stone UpStairs"
+{
+    id = 302
+    charSet = [60] // '<'
+    shortdesc = "stairs leading upward"
+    longdesc = "worked stone steps spiraling upward"
+    bgColor = "#666666"
+    fgColor = "#888888"
+
+    // flags
+    notable
+}
+
+Tile "Stone DownStairs"
+{
+    id = 303
+    charSet = [62] // '>'
+    shortdesc = "stairs leading downward"
+    longdesc = "worked stone steps spiraling downward"
+    bgColor = "#444444"
+    fgColor = "#888888"
+
+    // flags
+    notable
+}
+
+Tile "Closed Wooden N/S Door"
+{
+    id = 400
+    charSet = [196] // single horizontal line
+    shortdesc = "closed wooden door"
+    longdesc = "sturdy wooden door"
+    fgColor = "#7F653F"
+
+    // flags
+    blocksLight
+    blocksWalk
+
+    // actions
+    onOpen = 401
+}
+
+Tile "Open Wooden N/S Door"
+{
+    id = 401
+    charSet = [124] // '|'
+    shortdesc = "open wooden door"
+    longdesc = "sturdy wooden door"
+    fgColor = "#7F653F"
+
+    // actions
+    onOpen = 400
+}
+
+Tile "Closed Wooden E/W Door"
+{
+    id = 402
+    charSet = [179] // single vertical line
+    shortdesc = "closed wooden door"
+    longdesc = "sturdy wooden door"
+    fgColor = "#7F653F"
+
+    // flags
+    blocksLight
+    blocksWalk
+
+    // actions
+    onOpen = 403
+}
+
+Tile "Open Wooden E/W Door"
+{
+    id = 403
+    charSet = [95] // '_'
+    shortdesc = "open wooden door"
+    longdesc = "sturdy wooden door"
+    fgColor = "#7F653F"
+
+    // actions
+    onOpen = 402
+}
+
+Tile "Lit Brazier"
+{
+    id = 500
+    charSet = [42]
+    shortdesc = "a lit brazier"
+    longdesc = "a lit stone brazier"
+    fgColor = "#FFE9A6"
+
+    // flags
+    notable
+
+    // attributes
+    light = "Lantern"
+
+    // actions
+    onToggle = 501
+}
+
+Tile "Unlit Brazier"
+{
+    id = 500
+    charSet = [21]
+    shortdesc = "an unlit brazier"
+    longdesc = "an unlit stone brazier"
+    fgColor = "#777777"
+
+    // flags
+    notable
+
+    // actions
+    onToggle = 500
+}

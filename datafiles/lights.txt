@@ -1,0 +1,44 @@
+/*
+ * Defines standard light sources
+ *
+ * intensity - how strong the light is; how far it reaches
+ * lightColor - color of the light in hex #RRGGBB
+ * flickerRate - time in seconds the light will flicker
+ * flickerDelta - the magnitude that flicker can grow or shrink the light's intensity
+ */
+
+Light "Candle"
+{
+    intensity = 0.5
+    lightColor = "#FFE9A6"
+    flickerRate = 0.1
+    flickerDelta = 0.1
+    noiseType = "Perlin"
+}
+
+Light "Torch"
+{
+    intensity = 3.0
+    lightColor = "#FFE9A6"
+    flickerRate = 0.1
+    flickerDelta = 0.1
+    noiseType = "Perlin"
+}
+
+Light "Lantern"
+{
+    intensity = 1.2 
+    lightColor = "#FFE9A6"
+    flickerRate = 0.1
+    flickerDelta = 0.1
+    noiseType = "Perlin"
+}
+
+Light "Red Glow"
+{
+    intensity = 1.0
+    lightColor = "#DD0044"
+    flickerRate = 0.1
+    flickerDelta = 0.1
+    noiseType = "Perlin"
+}

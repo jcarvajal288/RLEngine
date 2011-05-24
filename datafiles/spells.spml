@@ -1,0 +1,61 @@
+spell "Magic Missile"
+{
+    attributes
+    {
+        school = "evocation"
+        level = 1
+        castingTime = 10 // as angband reckons time
+        range = 20 // in tiles
+        targets = min(5, caster.level/2) enemy
+        los = true // caster must have line of sight to target
+    }
+
+    effects
+    {
+        foreach target
+        {
+            damage(1d4+1, "arcane")
+        }
+    }
+
+    visuals
+    {
+        foreach target
+        {
+            point origin = caster.position
+            point dest = target.position
+            bolt(origin, dest, TCODColor::purple, 0.7) // 0.5 = light intensity
+        }
+    }
+}
+
+
+
+spell "Fireball"
+{
+    attributes
+    {
+        school = "evocation"
+        level = 3
+        castingTime = 20
+        range = 20
+        targets = tile
+        los = true
+    }
+
+    effects
+    {
+        foreach actor in 5
+        {
+            damage(caster.level * d6, "fire")
+        }
+    }
+
+    visuals
+    {
+        point origin = caster.position
+        point dest = target.position
+        bolt(origin, dest, TCODColor::fire, 0.5) // 0.5 = light intensity
+        burst(dest, TCODColor::fire, 2.0) // 2.0 = light intensity
+    }
+}
