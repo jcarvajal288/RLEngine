@@ -19,6 +19,19 @@ Pick any font found in ./fonts.  Make sure the font attributes match the tags in
        
 
 
+Window Positioning
+
+Message Log to Game Window Ratio
+Determines how big the Message Log is relative to the Game Window
+[MLHEIGHT:2] defaults to '2'
+[GWHEIGHT:3] defaults to '3'
+
+Party Window to GameWindow Ratio
+Deterines how big the Party Window is relative to the Game Window
+[PWWIDTH:1] defaults to '1'
+[GWWIDTH:4] defaults to '4'
+
+
 
 Renderer - which renderer the game uses.  Possible values are:
 GLSL   : works only on video cards with pixel shaders
@@ -34,4 +47,4 @@ Log size - how many messages the game message log will hold in memory.  Increase
 
 [LOGSIZE:500]
 
-[LIGHTFLICKER:false] make 'true' if you want lights to flicker like realistic torches. 'false' by default.
+[LIGHTFLICKER:false] make 'true' if you want lights to flicker like realistic torches. 'false' by default (cause it's buggy).

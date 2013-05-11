@@ -30,6 +30,7 @@ Tile "Name of Tile"
     All actions are optional properties.
     Possible actions:
         onOpen
+        onToggle
 }
 
 */
@@ -55,6 +56,19 @@ Tile "High Grass"
     fgColor = "#00FF00"
 }
 
+Tile "Dirt Floor"
+{
+    id = 102
+    charSet = [46, 96] // '.', '`'
+    shortdesc = "dirt floor"
+    longdesc = "a clear area of dirt"
+    bgColor = "#5E4B2F"
+    fgColor = "#9E8664"
+
+    // flags
+    multipleChars
+}
+
 Tile "Dirt Wall"
 {
     id = 200
@@ -62,6 +76,20 @@ Tile "Dirt Wall"
     shortdesc = "a dirt wall"
     longdesc = "rough, hard packed dirt wall"
     bgColor = "#71593F"
+    fgColor = "#555555"
+
+    // flags
+    blocksLight
+    blocksWalk
+}
+
+Tile "Rough Stone Wall"
+{
+    id = 201
+    charSet = [176] // lightly filled square
+    shortdesc = "a stone wall"
+    longdesc = "rough stone wall"
+    bgColor = "#888888"
     fgColor = "#555555"
 
     // flags
@@ -197,7 +225,7 @@ Tile "Lit Brazier"
 
 Tile "Unlit Brazier"
 {
-    id = 500
+    id = 501
     charSet = [21]
     shortdesc = "an unlit brazier"
     longdesc = "an unlit stone brazier"
