@@ -1,19 +1,21 @@
-#ifndef RLE_LEVEL_HPP
-#define RLE_LEVEL_HPP
+#ifndef RLNS_LEVEL_HPP
+#define RLNS_LEVEL_HPP
 
+#include <algorithm>
 #include <iostream>
-#include <map>
+#include <iterator>
 #include <string>
+#include <vector>
 
-#include "Actor.hpp"
+#include "Area.hpp"
 #include "CheckedSave.hpp"
-#include "Display.hpp"
-#include "DungeonGenerator.hpp"
+#include "CaveBuilder.hpp"
+#include "DungeonBuilder.hpp"
+#include "Item.hpp"
 #include "Map.hpp"
+#include "RoomFiller.hpp"
 #include "Tile.hpp"
-#include "Tileset.hpp"
 #include "Types.hpp"
-#include "Utility.hpp"
 
 #include "libtcod.hpp"
 
@@ -22,9 +24,22 @@ namespace rlns
     namespace model
     {
         /*--------------------------------------------------------------------------------
+            Struct      : TileInfo
+            Description : Packages information about what to render in a specific tile.
+                          This is passed back to the rendering functions to deal with.
+        --------------------------------------------------------------------------------*/
+        struct TileInfo
+        {
+            TCODColor bgColor, fgColor;
+            int ascii;
+        };
+
+
+
+        /*--------------------------------------------------------------------------------
             Class       : Level
-            Description : Holds all the information that goes into a level, such as the
-                          map, monsters, and items.
+            Description : Contains a map, items, monsters, etc.  Also has a static vector
+                          containing all of the game's levels.
             Parents     : None
             Children    : None
             Friends     : None
@@ -34,93 +49,88 @@ namespace rlns
             // Member Variables
             private:
                 MapPtr map;
-                //std::vector<FeaturePtr> features;
-                // creatures, features, etc.
+                std::vector<AreaPtr> areas;
+
+                // groups of players or monsters in the level
+                std::vector<PartyPtr> parties; 
+
+                // items present
+                std::vector<ItemPtr> items;
+
+            // Static Variables
+            private:
+                static std::vector<LevelPtr> levels;
+                static unsigned int currentLevel;
 
             // Member Functions
             private:
-                void addLights();
-                void generateMap(const std::string&, const bool);
+                Level() {}
 
             public:
-                Level(const std::string& tileset, const bool descending)
-                {
-                    generateMap(tileset, descending);
-                }
+                Level(const std::string&);
+                Level(utl::RLNSZip&);
 
-                Level(utl::RLNSZip&); // used for save game loading
+                // Map Functions
+                int getMapWidth()  const { return map->getWidth(); }
+                int getMapHeight() const { return map->getHeight(); }
+                TileInfo getTileInfo(const int, const int) const;
+                utl::Point getUpStairLocation() const;
+                bool moveLegal(const utl::Point&, const MovementType) const;
+                int  signalTile(const utl::Point&, const TileActionType);
 
-                int getWidth() const { return map->getWidth(); }
-                int getHeight() const { return map->getHeight(); }
+                // Party Functions
+                void addParty(const PartyPtr);
+                std::vector<PartyPtr> getParties() const
+                { return parties; }
 
-                bool isWalkable(const utl::Point&) const;
-                bool isWalkable(const int, const int) const;
+                // Item Functions
+                void addItem(const ItemPtr);
+                std::vector<ItemPtr> getItems() const
+                { return items; }
 
-                bool isTransparent(const utl::Point&) const;
-                bool isTransparent(const int, const int) const;
+                std::vector<ItemPtr> fetchItemsAtLocation(const utl::Point&);
+                void inspectTileContents(std::string&, const utl::Point&) const;
 
-                std::vector<TilePtr> getTiles(const int x, const int y) const { return map->getTiles(x,y); }
-                std::vector<TilePtr> getTiles(const utl::Point& pt) const { return getTiles(pt.getX(), pt.getY()); }
-
-                TCODColor getTileLightInfo(const utl::Point& p) const { return getTileLightInfo(p.getX(), p.getY()); }
-                TCODColor getTileLightInfo(const int x, const int y) const { return map->getTileLightInfo(x,y); }
-
-                void updateTileLightInfo(const int x, const int y, const TCODColor& l)  { map->updateTileLightInfo(x, y, l); }
-                void updateTileLightInfo(const utl::Point& p, const TCODColor& l)       { map->updateTileLightInfo(p.getX(), p.getY(), l); }
-
-                void examineTile(const utl::Point& pt) const { map->examineTile(pt); }
-
-                std::vector<utl::Point> getUpStairs()   const { return map->getUpStairs(); }
-                std::vector<utl::Point> getDownStairs() const { return map->getDownStairs(); }
-                std::vector<utl::Point> getStairs();
-
-                bool checkForTileChar(const utl::Point&, const char) const;
-
-                void calculateFOV(const utl::Point& p, const int r) { map->calculateFOV(p,r); }
-                void calculatePartyFOV(std::vector< std::vector<bool> >&, const std::vector<utl::Point>&);
-                bool isInFOV(const int x, const int y) const { return map->isInFOV(x,y); }
-
-                void drawTile(const int a, const int b, const int x, const int y) const { map->drawTile(a,b,x,y); }
-
-                std::vector<int> getLights() const;
-                void addLight(const utl::Point&, const int);
-                //void removeLight(const utl::Point&);
-                void clearLightMap() { map->clearLightMap(); }
-
-                bool signalTile(const utl::Point& pt, const TileActionType t) { return map->signalTile(pt, t); }
 
                 void saveToDisk(utl::RLNSZip&) const;
+
+            // Static Functions
+            public:
+                static void addLevel(const std::string&);
+                static LevelPtr getCurrentLevel() { return levels.at(currentLevel); }
+                static void gotoNextLevel() { ++currentLevel; }
+                static void gotoPreviousLevel() { if(currentLevel > 0) --currentLevel; }
+                static void saveLevelsToDisk(utl::RLNSZip&);
+                static void loadLevelsFromDisk(utl::RLNSZip&);
+
         };
 
 
-        // inline functions
+        // Inline Functions
 
-        inline bool Level::isWalkable(const utl::Point& pt) const
+        inline utl::Point Level::getUpStairLocation() const
         {
-            return isWalkable(pt.getX(), pt.getY());
-        }
-        inline bool Level::isWalkable(const int x, const int y) const
-        {
-            return map->isWalkable(x,y);
+            return map->getUpStairLocation();
         }
 
-        inline bool Level::isTransparent(const utl::Point& pt) const
+        inline void Level::addParty(const PartyPtr party)
         {
-            return isTransparent(pt.getX(), pt.getY());
-        }
-        inline bool Level::isTransparent(const int x, const int y) const
-        {
-            return map->isTransparent(x,y);
+            parties.push_back(party);
         }
 
-        inline void Level::calculatePartyFOV(std::vector< std::vector<bool> >& partyFOV, const std::vector<utl::Point>& pos) 
-        { 
-            map->calculatePartyFOV(partyFOV, pos); 
+        inline void Level::addItem(const ItemPtr item)
+        {
+            items.push_back(item);
         }
 
-        inline void Level::addLight(const utl::Point& pt, const int lightID)
+        inline bool Level::moveLegal(const utl::Point& pt, const MovementType moveType) const
         {
-            map->addLight(lightID, pt);
+            return map->moveLegal(pt, moveType);
+        }
+
+        inline int Level::signalTile(const utl::Point& pt, const TileActionType signal)
+        {
+            return map->signalTile(pt, signal);
         }
     }
 }

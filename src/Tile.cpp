@@ -22,7 +22,11 @@ namespace rlns
             if(it == list.end()) // the tile doesn't exist, throw an error
             {
                 char msg[30];
+            #ifdef _WIN32
+                sprintf_s(msg, "Tile ID %d doesn't exist!", i);
+            #else
                 sprintf(msg, "Tile ID %d doesn't exist!", i);
+            #endif
                 utl::fatalError(msg);
             }
             return it->second;
@@ -40,7 +44,12 @@ namespace rlns
         --------------------------------------------------------------------------------*/
         int Tile::signal(const TileActionType action)
         {
-            return actions[action];
+            int i = 0;
+
+            try { i = actions.at(action); }
+            catch(exception&) { return 0; }
+
+            return i;
         }
 
 
@@ -66,7 +75,7 @@ namespace rlns
             fg = bg = TCODColor::fuchsia;  // fuchsia is used as the 'empty' color, since nothing will be that fabulous
             for(int i=0; i<NUM_TILE_ACTIONS; ++i)
             {
-                actions[i] = -1; // -1 indicates no action
+                actions[i] = 0; // 0 indicates no action
             }
             for(int i=0; i<NUM_TILE_FLAGS; ++i)
             {
@@ -80,7 +89,8 @@ namespace rlns
 
         /*--------------------------------------------------------------------------------
             Function    : TileParser::TileListener::parserFlag
-            Description : Only returns true, since the Tile struct doesn't use flags
+            Description : If the parser finds a flag defined in a struct, this assigns a 
+                          true value to the appropriate tracking variable.
             Inputs      : parser, flag name
             Outputs     : None
             Return      : bool
@@ -98,6 +108,10 @@ namespace rlns
             else if(strcmp(name, "directionallyLinked") == 0)
             {
                 flags[DIRECTIONALLY_LINKED] = true;
+            }
+            else if(strcmp(name, "multipleChars") == 0)
+            {
+                flags[MULTIPLE_CHARS] = true;
             }
             else if(strcmp(name, "notable") == 0)
             {
@@ -194,7 +208,8 @@ namespace rlns
             int* charSetEnd = charSet.end();
             for(int* it = charSet.begin(); it != charSetEnd; ++it, ++count)
             {
-                TilePtr newTile(new Tile(*it, fg, bg, shortdesc, longdesc, light, actions, flags));
+                int numChars= charSetEnd - charSet.begin();
+                TilePtr newTile(new Tile(*it, numChars, fg, bg, shortdesc, longdesc, light, actions, flags));
                 Tile::list.insert(pair<int, TilePtr>(id+count, newTile));
             }
             return true;
@@ -236,8 +251,8 @@ namespace rlns
                 cout << "char: " << it->second->getChar() << endl;
                 cout << "FGColor: "; utl::printColor(it->second->getFgColor());
                 cout << "BGColor: "; utl::printColor(it->second->getBgColor());
-                cout << "shortdesc: " << it->second->getShortDesc() << endl;
-                cout << "longdesc: " << it->second->getLongDesc() << endl;
+                cout << "shortdesc: " << it->second->shortDescription() << endl;
+                cout << "longdesc: " << it->second->longDescription() << endl;
                 cout << "dlinked?: " << it->second->isDirectionallyLinked() << endl;
                 cout << "blocksLight?: " << it->second->blocksLight() << endl;
                 cout << "blocksWalking?: " << it->second->blocksWalking() << endl;
@@ -268,6 +283,7 @@ namespace rlns
             TileStruct.addFlag("blocksLight");
             TileStruct.addFlag("blocksWalk");
             TileStruct.addFlag("directionallyLinked");
+            TileStruct.addFlag("multipleChars");
             TileStruct.addFlag("notable");
 
             // define feature attributes

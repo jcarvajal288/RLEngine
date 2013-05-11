@@ -1,6 +1,11 @@
 #ifndef RLNS_CHECKEDSAVE_HPP
 #define RLNS_CHECKEDSAVE_HPP
 
+// see warning disable rationale in lcrl.hpp
+#ifdef _WIN32
+#pragma warning( disable : 4482 )
+#endif
+
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
@@ -14,35 +19,39 @@ namespace rlns
     namespace utl
     {
         /*--------------------------------------------------------------------------------
-            Class       : RLNSZip
-            Description : Wrapper class for the libtcod RLNSZip class.  RLNSZip doesn't
+            Class       : CheckedZip
+            Description : Wrapper class for the libtcod TCODZip class.  CheckedZip doesn't
                           check whether what it put in and what it gets out is consistent,
-                          leading to difficulty debugging save/load functions. RLNSZip
+                          leading to difficulty debugging save/load functions. CheckedZip
                           tags each input with a type enum, so a load function will know
                           if it gets an input of an unexpected type.
             Parents     : TCODZip (for functions that don't require checking)
             Children    : None
             Friends     : None
         --------------------------------------------------------------------------------*/
-        class RLNSZip: public TCODZip
+        class CheckedZip: public TCODZip
         {
             // Member Variables
             private:
                 enum SaveType
                 {
-                    CHAR,
-                    INT,
-                    FLOAT,
-                    STRING,
-                    COLOR,
-                    IMAGE,
-                    CONSOLE,
-                    DATA
+                    CHAR = 0,
+                    INT = 1,
+                    FLOAT = 2,
+                    STRING = 3,
+                    COLOR = 4,
+                    IMAGE = 5,
+                    CONSOLE = 6,
+                    DATA = 7
                 };
 
             // Member Functions
+            private:
+                std::string interpretTypeCode(const int) const;
+                void error(const int, const int) const;
+
             public:
-                RLNSZip(): TCODZip() {}
+                CheckedZip(): TCODZip() {}
 
                 // Input Functions
                 char getChar();

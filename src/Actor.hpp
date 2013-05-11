@@ -1,16 +1,15 @@
 #ifndef RLNS_ACTOR_HPP
 #define RLNS_ACTOR_HPP
 
-#include <iostream>
-#include <vector>
+// see warning disable rationale in lcrl.hpp
+#ifdef _WIN32
+    #pragma warning( disable : 4482 )
+#endif
 
-#include "CheckedSave.hpp"
-#include "Light.hpp"
-#include "AbstractTile.hpp"
+#include "Inventory.hpp"
+#include "MapObject.hpp"
 #include "Point.hpp"
-#include "Utility.hpp"
-
-#include "libtcod.hpp"
+#include "Types.hpp"
 
 namespace rlns
 {
@@ -19,49 +18,41 @@ namespace rlns
         /*--------------------------------------------------------------------------------
             Class       : Actor
             Description : Represents players, creatures, etc.  Essentially anything that
-                          can move.
-            Parents     : AbstractTile
-            Children    : None (yet?)
-            Friends     : None
+                          has stats and can move.
+            Parents     : MapObject
+            Children    : None
+            Friends     : InventoryScreen
         --------------------------------------------------------------------------------*/
-        class Actor: public AbstractTile
+        class Actor: public MapObject
         {
             // Member Variables
             private:
-                utl::Point position;
-                std::vector<int> ownedLights; // indices into the object's level's lights map
+                Inventory inventory;
 
             // Member Functions
-            private:
-                void moveLights();
-
             public:
-                Actor(const utl::Point& p, const int ch, const TCODColor& col)
-                : AbstractTile(ch, col, TCODColor::fuchsia, "",""), position(p) {}
-
-                Actor(utl::RLNSZip& zip); // used for save game loading
+                Actor(const utl::Point&, const int, const TCODColor&);
 
                 virtual ~Actor() {}
 
-                utl::Point getPosition() const { return position; }
-                void setPosition(const utl::Point& p);
-                std::vector<int> getLights() const { return ownedLights; }
+                void giveItem(const ItemPtr);
 
-                void attachLight(const int);
+                void shiftPosition(const DirectionType); 
 
-                virtual const char* description() const { return "an actor"; }
+                MovementType getMovementType() const 
+                { return MovementType::WALKING; }
 
-                virtual void move(const DirectionType dir);
-
-                void saveToDisk(utl::RLNSZip& zip) const;
+                friend class InventoryScreen;
         };
 
 
-        // inline functions
-        inline void Actor::setPosition(const utl::Point& p)
+        // Inline Functions
+
+        inline void Actor::shiftPosition(const DirectionType dir)
         {
-            position = p;
-            moveLights();
+            utl::Point pt = getPosition();
+            pt.shift(dir);
+            setPosition(pt);
         }
     }
 }

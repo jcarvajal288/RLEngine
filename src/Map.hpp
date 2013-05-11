@@ -1,38 +1,24 @@
-#ifndef RLE_MAP_HPP
-#define RLE_MAP_HPP
+#ifndef RLNS_MAP_HPP
+#define RLNS_MAP_HPP
 
 #include <algorithm>
 #include <iostream>
-#include <stdexcept>
-#include <sstream>
-#include <string>
-#include <utility>
 #include <vector>
 
+#include "AbstractTile.hpp"
 #include "CheckedSave.hpp"
-#include "Display.hpp"
-#include "Light.hpp"
-#include "Point.hpp"
-#include "Tile.hpp"
 #include "Tileset.hpp"
-#include "Types.hpp"
-#include "Utility.hpp"
-
-#include "libtcod.hpp"
 
 namespace rlns
 {
     namespace model
     {
+        typedef std::vector< std::vector< std::vector<int> > > IntVector3D;
+
         /*--------------------------------------------------------------------------------
             Class       : Map
-            Description : Holds the array of tiles and other information that goes into a
-                          level map.
-            Members     : tileset - the tileset that this map follows.
-                          tileMap - a 3D array of indices into the Tile list.  At
-                          first, only 1 tile will be in each coordinate, but as features
-                          are added, each coordinate will have several terrain indices.
-                          lightMap - tracks the light level in each coordinate
+            Description : Contains all the data needed for a level map.  Includes the tile
+                          map, pathing map, and lighting map.
             Parents     : None
             Children    : None
             Friends     : None
@@ -40,178 +26,146 @@ namespace rlns
         class Map
         {
             // Member Variables
-            private:
+            public:
                 TilesetPtr tileset;
-                std::vector< std::vector< std::vector<int> > > tileMap; // 3D array of indices into the Tile list
-                std::vector<int> lights; // tracks light sources by tracking the IDs of lights in the level
-                std::vector< std::vector<TCODColor> > lightMap; 
-                //std::vector<AreaPtr> areas;
-                std::vector<utl::Point> upStairs;
-                std::vector<utl::Point> downStairs;
 
-                TCODMapPtr fovMap; // tracks field of view
+                // This TCODImage will have twice the width and height of the
+                // tileMap in order to have four data entries per tile. This
+                // allows the map to be shaded using subpixels.
+                TCODImage lightMap;
+
+                // This map is the same width and height of the tile map and is
+                // used for pathfinding and field of view.
+                TCODMap pathingMap;
+
+            private:
+                // two dimensions for width and height, and the third dimension
+                // for stacking tiles on top of each other, such as a door tile
+                // sitting on top of a floor tile
+                IntVector3D tileMap;
+                utl::Point upStairLocation, downStairLocation;
 
             // Member Functions
+            private:
+                void updateTileCoordinate(const int, const int);
+
             public:
-                Map(const TilesetPtr t)
-                : tileset(t),
-                  tileMap(t->getMapWidth(), 
-                          std::vector< std::vector<int> >(t->getMapHeight(), 
-                                                          std::vector<int>(1, t->getFillerTileID()))),
-                  lightMap(t->getMapWidth(), 
-                           std::vector<TCODColor>(t->getMapHeight(), 
-                                                  TCODColor::white * tileset->getAmbientLight())),
-                  fovMap(new TCODMap(t->getMapWidth(), t->getMapHeight())) {}
+                Map(const TilesetPtr);
+                Map(utl::RLNSZip&);
 
-                Map(utl::RLNSZip&); // used for loading save games
+                TilesetPtr getTileset() const 
+                { return tileset; }
 
-                int getWidth()  const  { return tileMap.size(); }
-                int getHeight() const  { return tileMap.at(0).size(); }
+                size_t getWidth() const 
+                { return tileMap.size(); }
 
-                TilesetPtr getTileset() const { return tileset; }
+                size_t getHeight() const
+                { return tileMap.at(0).size(); }
 
-                int getFloorTileID(const int i=0)  const { return tileset->getFloorTileID(i); }
-                int getWallTileID(const int i=0)   const { return tileset->getWallTileID(i); }
-                int getFillerTileID(const int i=0) const { return tileset->getFillerTileID(i); }
+                utl::Point getUpStairLocation() const
+                { return upStairLocation; }
+                void setUpStairLocation(const utl::Point& up)
+                { upStairLocation = up; }
 
-                std::vector<TilePtr> getTiles(const int, const int) const;
-                std::vector<TilePtr> getTiles(const utl::Point&) const;
-                int getTileID(const int, const int) const;
-                int getTileID(const utl::Point&) const;
-                void setTileID(const int, const int, const int);
-                void setTileID(const utl::Point&, const int);
+                utl::Point getDownStairLocation() const
+                { return downStairLocation; }
+                void setDownStairLocation(const utl::Point& down)
+                { downStairLocation = down; }
 
-                void addLight(const int, const utl::Point&);
-                std::vector<int> getLights() const { return lights; }
+                std::vector<int> at(const int, const int) const;
+                std::vector<int> at(const utl::Point&) const;
 
-                bool signalTile(const utl::Point&, const TileActionType);
-                void examineTile(const utl::Point&) const;
+                // Returns the tile ID at the end of the vector at
+                // the given coordinates. This is the most visible
+                // tile at those coordinates.
+                int topMostAt(const int, const int) const;
+                int topMostAt(const utl::Point&) const;
 
-                TCODColor getTileLightInfo(const int, const int) const;
-                TCODColor getTileLightInfo(const utl::Point&) const;
-                void updateTileLightInfo(const int, const int, const TCODColor&);
-                void updateTileLightInfo(const utl::Point&, const TCODColor&);
-                void clearLightMap();
-
-                std::vector<utl::Point> getUpStairs() const { return upStairs; }
-                std::vector<utl::Point> getDownStairs() const { return downStairs; }
-                void setUpStairs(const std::vector<utl::Point>& ups) { upStairs = ups; }
-                void setDownStairs(const std::vector<utl::Point>& downs) { downStairs = downs; }
-
-                void lightLights();
-
-                void updateFOVMap(const int x, const int y);
-                void calculateFOV(const utl::Point&, const int);
-                void calculatePartyFOV(std::vector< std::vector<bool> >&, const std::vector<utl::Point>&);
-                bool isInFOV(const int x, const int y) const { return fovMap->isInFov(x,y); }
-
-                bool isWalkable(const utl::Point&) const;
-                bool isWalkable(const int, const int) const;
-
-                bool isTransparent(const utl::Point&) const;
-                bool isTransparent(const int, const int) const;
-
-                void drawTile(const int, const int, const int, const int) const;
+                // Returns the tile ID at the beginning of the vector
+                // at the given coordinates.  This is the least visible
+                // tile at those coordinates.
+                int bottomMostAt(const int, const int) const;
+                int bottomMostAt(const utl::Point&) const;
+                void setBottomMostAt(const int, const int, const int);
+                void setBottomMostAt(const utl::Point&, const int);
 
                 void addFeature(const int, const int, const int);
                 void addFeature(const utl::Point&, const int);
 
+                bool isBorderTile(const unsigned int, const unsigned int) const;
+                bool isInBoard(const int, const int) const;
+                bool isInBoard(const utl::Point&) const;
+
+                bool isWalkable(const int, const int) const;
+                bool isWalkable(const utl::Point&) const;
+
+                bool moveLegal(const utl::Point&, const MovementType) const;
+
+                bool signalTile(const utl::Point&, const TileActionType);
+
+                void listTileFeatures(std::vector<AbstractTilePtr>&, const utl::Point&) const;
+
                 void saveToDisk(utl::RLNSZip&) const;
-                void loadFromDisk(utl::RLNSZip&);
         };
 
-        // inline functions
-        inline int Map::getTileID(const int x, const int y) const
+
+        // Inline Functions
+
+        inline std::vector<int> Map::at(const utl::Point& pt) const
         {
-            return tileMap.at(x).at(y).at(0);
-        }
-        inline int Map::getTileID(const utl::Point& p) const
-        {
-            return getTileID(p.getX(), p.getY());
-        }
-        inline std::vector<TilePtr> Map::getTiles(const utl::Point& p) const
-        {
-            return getTiles(p.getX(), p.getY());
+            return at(pt.X(), pt.Y());
         }
 
-        inline void Map::setTileID(const int x, const int y, const int a)
+        inline int Map::topMostAt(const utl::Point& pt) const
         {
-            tileMap.at(x).at(y).at(0) = a;
-
-            // update fovMap's transparency value at this point to reflect the new terrain
-            TilePtr tile(Tile::findTile(a));
-            fovMap->setProperties(x,y, !tile->blocksLight(), !tile->blocksWalking());
-        }
-        inline void Map::setTileID(const utl::Point& p, const int a)
-        {
-            setTileID(p.getX(), p.getY(), a);
+            return topMostAt(pt.X(), pt.Y());
         }
 
-        inline void Map::addLight(const int lightID, const utl::Point& pt)
+        inline int Map::bottomMostAt(const utl::Point& pt) const
         {
-            Light::moveLight(lightID, pt);
-            lights.push_back(lightID);
+            return bottomMostAt(pt.X(), pt.Y());
         }
 
-        inline TCODColor Map::getTileLightInfo(const int x, const int y) const
+        inline void Map::setBottomMostAt(const utl::Point& pt, const int id) 
         {
-            return lightMap.at(x).at(y);
-        }
-        inline TCODColor Map::getTileLightInfo(const utl::Point& p) const
-        {
-            return getTileLightInfo(p.getX(), p.getY());
+            setBottomMostAt(pt.X(), pt.Y(), id);
         }
 
-        inline void Map::updateTileLightInfo(const int x, const int y, const TCODColor& newColor)
+        inline void Map::addFeature(const utl::Point& pt, const int id)
         {
-            TCODColor oldColor(lightMap.at(x).at(y));
-            TCODColor result(std::max(oldColor.r, newColor.r), 
-                             std::max(oldColor.g, newColor.g), 
-                             std::max(oldColor.b, newColor.b));
-            lightMap.at(x).at(y) = result;
-        }
-        inline void Map::updateTileLightInfo(const utl::Point& p, const TCODColor& a)
-        {
-            updateTileLightInfo(p.getX(), p.getY(), a);
+            addFeature(pt.X(), pt.Y(), id);
         }
 
-
-        inline bool Map::isWalkable(const utl::Point& pt) const 
-        { 
-            return isWalkable(pt.getX(), pt.getY()); 
+        inline bool Map::isBorderTile(const unsigned int x, const unsigned int y) const
+        {
+            return (x == 0 || x == getWidth()-1) || (y == 0 || y == getHeight()-1);
         }
-        inline bool Map::isWalkable(const int x, const int y) const 
-        { 
-            if(x >= 0 && x < getWidth() && y >= 0 && y < getHeight())
-                return fovMap->isWalkable(x,y); 
-            else
+
+        // Checks if a given point is within the map boundaries
+        inline bool Map::isInBoard(const int x, const int y) const
+        {
+            if((x < 0) || (x >= static_cast<int>(getWidth())-1)
+            || (y < 0) || (y >= static_cast<int>(getHeight())-1))
+            {
                 return false;
+            }
+            return true;
         }
 
-        inline bool Map::isTransparent(const utl::Point& pt) const 
-        { 
-            return isTransparent(pt.getX(), pt.getY()); 
-        }
-        inline bool Map::isTransparent(const int x, const int y) const 
-        { 
-            if(x >= 0 && x < getWidth() && y >= 0 && y < getHeight())
-                return fovMap->isTransparent(x,y); 
-            else
-                return false;
-        }
-
-        inline void Map::addFeature(const int x, const int y, const int fid)
+        inline bool Map::isInBoard(const utl::Point& pt) const
         {
-            TilePtr tile(Tile::findTile(fid));
-            tileMap.at(x).at(y).push_back(fid);
+            return isInBoard(pt.X(), pt.Y());
+        }
 
-            // update fovMap to account for the new feature
-            fovMap->setProperties(x,y, !tile->blocksLight(), !tile->blocksWalking());
-        }
-        inline void Map::addFeature(const utl::Point& pt, const int fid)
+        inline bool Map::isWalkable(const utl::Point& pt) const
         {
-            addFeature(pt.getX(), pt.getY(), fid);
+            return isWalkable(pt.X(), pt.Y());
         }
+
+
+        // Non-member Functions
+
+        bool hasDoorAdjacentTo(const MapPtr, const utl::Point&);
     }
 }
 

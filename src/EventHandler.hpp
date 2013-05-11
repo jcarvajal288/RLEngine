@@ -1,13 +1,17 @@
 #ifndef RLNS_EVENT_HANDLER_HPP
 #define RLNS_EVENT_HANDLER_HPP
 
-#include <iostream>
+// see warning disable rationale in lcrl.hpp
+#ifdef _WIN32
+    #pragma warning( disable : 4482 )
+#endif
 
-#include "Display.hpp"
-#include "GameData.hpp"
-#include "Renderer.hpp"
+#include <iostream>
+#include <vector>
+
 #include "Point.hpp"
 #include "Types.hpp"
+#include "Utility.hpp"
 
 #include "libtcod.hpp"
 
@@ -18,36 +22,27 @@ namespace rlns
         /*--------------------------------------------------------------------------------
             Class       : EventHandler
             Description : Manages all the interaction between the game and the user.
-                          Interprets keystrokes and (possibly) mouse events.  Uses the
-                          Singleton design pattern.
+                          Interprets keystrokes and (possibly) mouse events.  
             Parents     : None
             Children    : None
             Friends     : None
         --------------------------------------------------------------------------------*/
         class EventHandler
         {
-            // Member Variables
-            private:
-                static EventHandlerPtr _instance;
-
             // Member Functions
             private:
-                EventType useStairs(const char) const;
-                EventType movePlayer(const DirectionType) const;
-                EventType openCommand() const;
+                EventType promptDirection() const;
+                EventType getDirection(const TCOD_key_t) const;
 
-                DirectionType promptDirection() const;
-                DirectionType getDirection(const TCOD_key_t) const;
-
-                TCOD_key_t getKeypress() const;
-                EventType getPlayerInput() const;
                 EventType systemCommands(const TCOD_key_t) const;
-                EventType letterCommands(const char) const;
+                EventType letterCommands(const TCOD_key_t) const;
 
             public:
-                void gameLoop() const;
+                EventHandler() {}
 
-                static EventHandlerPtr get();
+                EventType keyToEvent(const TCOD_key_t) const;
+
+                EventType getPlayerInput() const;
         };
     }
 }

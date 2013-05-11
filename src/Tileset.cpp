@@ -89,6 +89,10 @@ namespace rlns
             {
                 temp.type = MapType::DUNGEON;
             }
+            else if(strName == "Cave")
+            {
+                temp.type = MapType::CAVE;
+            }
             temp.n = name;
             return true; 
         }
@@ -185,7 +189,7 @@ namespace rlns
             }
             else if(strcmp(name, "ambientLight") == 0)
             {
-                temp.al = value.f;
+                temp.al = value.col;
             }
             else if(strcmp(name, "mapWidth") == 0)
             {
@@ -287,7 +291,7 @@ namespace rlns
                 cout << "\tdownStair: " << (*it)->getDownStairTileID() << endl;
                 cout << "\tn-s_Door: " << (*it)->getN_S_DoorID() << endl;
                 cout << "\te-w_Door: " << (*it)->getE_W_DoorID() << endl;
-                cout << "\tambientLight: " << (*it)->getAmbientLight() << endl;
+                //cout << "\tambientLight: " << (*it)->getAmbientLight() << endl;
                 cout << "\tmapWidth: " << (*it)->getMapWidth() << endl;
                 cout << "\tmapHeight: " << (*it)->getMapHeight() << endl;
                 cout << "\trecurseLevel: " << (*it)->getRecurseLevel() << endl;
@@ -318,7 +322,7 @@ namespace rlns
             Dungeon.addProperty("downStair", TCOD_TYPE_INT, true);
             Dungeon.addProperty("n_s_Door", TCOD_TYPE_INT, true);
             Dungeon.addProperty("e_w_Door", TCOD_TYPE_INT, true);
-            Dungeon.addProperty("ambientLight", TCOD_TYPE_FLOAT, true);
+            Dungeon.addProperty("ambientLight", TCOD_TYPE_COLOR, true);
             Dungeon.addProperty("mapWidth", TCOD_TYPE_INT, true);
             Dungeon.addProperty("mapHeight", TCOD_TYPE_INT, true);
             Dungeon.addProperty("recurseLevel", TCOD_TYPE_INT, true);
@@ -326,6 +330,24 @@ namespace rlns
             Dungeon.addProperty("minVSize", TCOD_TYPE_INT, true);
             Dungeon.addProperty("maxHRatio", TCOD_TYPE_FLOAT, true);
             Dungeon.addProperty("maxVRatio", TCOD_TYPE_FLOAT, true);
+
+            // define Cave structure
+            TCODParserStruct Cave = *(parser.newStructure("Cave"));
+            Cave.addProperty("floorTile", TCOD_TYPE_INT, true);
+            Cave.addProperty("wallTile", TCOD_TYPE_INT, true);
+            Cave.addProperty("fillerTile", TCOD_TYPE_INT, true);
+            Cave.addProperty("upStair", TCOD_TYPE_INT, true);
+            Cave.addProperty("downStair", TCOD_TYPE_INT, true);
+            Cave.addProperty("n_s_Door", TCOD_TYPE_INT, true);
+            Cave.addProperty("e_w_Door", TCOD_TYPE_INT, true);
+            Cave.addProperty("ambientLight", TCOD_TYPE_COLOR, true);
+            Cave.addProperty("mapWidth", TCOD_TYPE_INT, true);
+            Cave.addProperty("mapHeight", TCOD_TYPE_INT, true);
+            Cave.addProperty("recurseLevel", TCOD_TYPE_INT, true);
+            Cave.addProperty("minHSize", TCOD_TYPE_INT, true);
+            Cave.addProperty("minVSize", TCOD_TYPE_INT, true);
+            Cave.addProperty("maxHRatio", TCOD_TYPE_FLOAT, true);
+            Cave.addProperty("maxVRatio", TCOD_TYPE_FLOAT, true);
         }
 
 

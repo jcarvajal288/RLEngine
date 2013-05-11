@@ -3,8 +3,9 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <string>
+#include <vector>
 
 #include "CheckedSave.hpp"
 #include "Point.hpp"
@@ -13,34 +14,18 @@ namespace rlns
 {
     namespace utl
     {
-       /*-------------------------------------------------------------------------------- 
-            Function    : fatalError
-            Description : Prints an error message to stderr, then exits the program
-            Inputs      : error message
-            Outputs     : error message
-            Return      : void
-        --------------------------------------------------------------------------------*/
         void fatalError(const std::string&);
 
-        /*--------------------------------------------------------------------------------
-            Function    : relDistance (relative distance)
-            Description : performs the distance formula, minus the square root, on two
-                          Points.  Useful for comparing distances while avoiding the
-                          costly square root function.
-            Inputs      : two Point objects
-            Outputs     : None
-            Return      : int
-        --------------------------------------------------------------------------------*/
+        TCOD_key_t getKeypress();
+
         int relDistance(const utl::Point&, const utl::Point&);
 
-        /*--------------------------------------------------------------------------------
-            Function    : printColor
-            Description : Convenience function for printing a TCODColor.
-            Inputs      : TCODColor
-            Outputs     : TCODColor printed in (r,g,b) format
-            Return      : void
-        --------------------------------------------------------------------------------*/
         void printColor(const TCODColor&);
+
+        void findStraightLineBetweenPoints(std::vector<Point>* result, const utl::Point&, const utl::Point&);
+
+        int signcos2(const int , const int , const int , const int , const int , const int);
+
 
 
 

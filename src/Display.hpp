@@ -1,15 +1,16 @@
 #ifndef RLNS_DISPLAY_HPP
 #define RLNS_DISPLAY_HPP
 
-#include <utility>
+#include <iostream>
+#include <stdexcept>
 
-#include "Console.hpp"
-#include "GameWindow.hpp"
+#include "Actor.hpp"
 #include "InitData.hpp"
+#include "Level.hpp"
+#include "MessageTracker.hpp"
+#include "Party.hpp"
 #include "Point.hpp"
 #include "Types.hpp"
-
-#include "libtcod.hpp"
 
 namespace rlns
 {
@@ -17,8 +18,8 @@ namespace rlns
     {
         /*--------------------------------------------------------------------------------
             Class       : Display
-            Description : Manages all of the display functions and data that go into the
-                          main game window. Uses the Singleton design.
+            Description : Manages and draws the various parts of the game screen. Uses the
+                          Singleton design pattern.
             Parents     : None
             Children    : None
             Friends     : None
@@ -27,47 +28,59 @@ namespace rlns
         {
             // Member Variables
             private:
-                static DisplayPtr _instance;
-                bool initialized; // lets get() know if Display has been properly initialized.
+                utl::Point focalPt; // where on the map the playfield is focusing (usually the player)
 
-                GameWindow gameWindow;
-                Console console;
+                utl::Point _playfieldTL;
+                TCODConsolePtr _playfield;
 
-                std::string commandLine;
-                //DisplayWindow partyWindow;
+                utl::Point _partyBarTL;
+                TCODConsolePtr _partyBar;
 
-            // Member Functions
-            protected:
-                Display() // throwaway default constructor
-                : initialized(false),
-                  gameWindow(utl::Point(0,0), utl::Point(0,0)),
-                  console(utl::Point(0,0), utl::Point(0,0)) {}
+                utl::Point _consoleTL;
+                TCODConsolePtr _console;
 
-                // single parameter constructor overload for when after InitData() has
-                // read init.txt and so has enough data to properly construct Display
-                Display(const bool b)
-                : initialized(b),
-                  gameWindow(utl::Point(0,0), utl::Point(InitData::get()->getGwTileWidth(),
-                                                         InitData::get()->getGwTileHeight())),
-                  console(InitData::get()->getConsoleTL(), InitData::get()->getConsoleBR()) {}
+                // These values are updated before every refresh.
+                utl::Point dispTL;      // top left of the display area
+                utl::Point dispBR;      // bottom right of the display area
+                utl::Point dispCenter;  // center of the display area
+                utl::Point camTL;       // top left of what the camera is looking at 
+                utl::Point camBR;       // bottom right of what the camera is looking at
 
             public:
-                static DisplayPtr get();
+                MessageTrackerPtr messageTracker;
 
-                std::pair<utl::Point, utl::Point> gameWindowCoords() const;
-                utl::Point gameWindowTL() const { return gameWindow.topLeft(); }
-                utl::Point gameWindowBR() const { return gameWindow.bottomRight(); }
-                utl::Point getFocalPoint() const { return gameWindow.getFocalPoint(); }
-                void setFocalPoint(const utl::Point& pt) { gameWindow.setFocalPoint(pt); }
-                void moveFocalPoint(const DirectionType d) { gameWindow.moveFocalPoint(d); }
 
-                // Command Line functions
-                void setCommandPrompt(const std::string& cmd) { commandLine = cmd; }
-                void drawCommandPrompt();
+            // Member Functions
+            private:
+                void drawLevelItems(const model::LevelPtr);
+                void drawLevelOccupants(const model::LevelPtr);
 
-                // Console functions
-                void drawConsole() const { console.draw(); }
-                void printToConsole(const std::string& str) { console.printStdMessage(str); }
+            public:
+                Display(const InitData&);
+
+                void setFocalPoint(const utl::Point& pt) { focalPt = pt; }
+                void shiftFocalPoint(const model::DirectionType);
+
+                void setDisplayValues();
+
+                void drawObject(const model::MapObjectPtr);
+
+                void inspectTile(const model::LevelPtr, const utl::Point&);
+
+                void drawPlayfield();
+                void drawPartyBar();
+                void drawConsole();
+
+                TCODConsolePtr playfield() { return _playfield; }
+                TCODConsolePtr partyBar() { return _partyBar; }
+                TCODConsolePtr console() { return _console; }
+
+                utl::Point playfieldTL() { return _playfieldTL; }
+                utl::Point partyBarTL() { return _partyBarTL; }
+                utl::Point consoleTL() { return _consoleTL; }
+
+                void draw() const;
+                void refresh(); 
         };
     }
 }

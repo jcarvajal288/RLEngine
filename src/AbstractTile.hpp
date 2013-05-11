@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "CheckedSave.hpp"
-#include "Light.hpp"
-#include "Utility.hpp"
+#include "Types.hpp"
 
 #include "libtcod.hpp"
 
@@ -61,8 +59,8 @@ namespace rlns
                 TCODColor getFgColor() const { return fgColor; }
                 TCODColor getBgColor() const { return bgColor; }
 
-                std::string getShortDesc() const { return shortdesc; }
-                std::string getLongDesc() const { return longdesc; }
+                std::string shortDescription() const { return shortdesc; }
+                std::string longDescription() const { return longdesc; }
 
                 virtual void saveToDisk(utl::RLNSZip&) const;
         };

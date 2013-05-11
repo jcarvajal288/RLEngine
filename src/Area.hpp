@@ -49,8 +49,8 @@ namespace rlns
                 //void loadFromDisk(RLNSZip&);
 
                 utl::Point getTL()  const { return topLeft; }
-                utl::Point getTR()  const { return utl::Point(bottomRight.getX(), topLeft.getY()); }
-                utl::Point getBL()  const { return utl::Point(topLeft.getX(), bottomRight.getY()); }
+                utl::Point getTR()  const { return utl::Point(bottomRight.X(), topLeft.Y()); }
+                utl::Point getBL()  const { return utl::Point(topLeft.X(), bottomRight.Y()); }
                 utl::Point getBR()  const { return bottomRight; }
                 utl::Point getDim() const { return dimensions; }
 

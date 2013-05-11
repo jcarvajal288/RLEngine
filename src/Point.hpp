@@ -1,5 +1,10 @@
-#ifndef POINT_HPP
-#define POINT_HPP
+#ifndef LCRL_POINT_HPP
+#define LCRL_POINT_HPP
+
+// see warning disable rationale in lcrl.hpp
+#ifdef _WIN32
+#pragma warning( disable : 4482 )
+#endif
 
 #include <iostream>
 
@@ -29,10 +34,10 @@ namespace rlns
             public:
                 Point(): x(0), y(0) {}
                 Point(const int a, const int b): x(a), y(b) {}
-                Point(RLNSZip& zip): x(zip.getInt()), y(zip.getInt()) {} // used for loading save games
+                Point(utl::RLNSZip& zip): x(zip.getInt()), y(zip.getInt()) {} // used for loading save games
 
-                void saveToDisk(RLNSZip&) const;
-                void loadFromDisk(RLNSZip&) {}
+                void saveToDisk(utl::RLNSZip&) const;
+                void loadFromDisk(utl::RLNSZip&) {}
 
                 Point& operator+=(const Point&);
                 Point& operator-=(const Point&);
@@ -41,21 +46,21 @@ namespace rlns
                 bool operator<(const Point&) const;
                 friend std::ostream& operator<<(std::ostream&, const Point&);
 
-                int getX() const {return x;}
-                int getY() const {return y;}
+                int X() const {return x;}
+                int Y() const {return y;}
                 void setX(const int a) {x = a;}
                 void setY(const int b) {y = b;}
 
-                void shift(DirectionType);
-                Point neighbor(DirectionType) const;
+                void shift(model::DirectionType);
+                Point neighbor(model::DirectionType) const;
                 bool withinBounds(const Point&, const Point&) const;
                 bool withinBounds(const int, const int, const int, const int) const;
         };
 
 
 
-        // save the Point to the given RLNSZip save buffer
-        inline void Point::saveToDisk(RLNSZip& zip) const
+        // save the Point to the given utl::RLNSZip save buffer
+        inline void Point::saveToDisk(utl::RLNSZip& zip) const
         {
             zip.putInt(x);
             zip.putInt(y);
@@ -65,23 +70,23 @@ namespace rlns
     // Point overloaded operators
         inline Point& Point::operator+=(const Point& rhs)
         {
-            x += rhs.getX();
-            y += rhs.getY();
+            x += rhs.X();
+            y += rhs.Y();
             return *this;
         }
 
         inline Point& Point::operator-=(const Point& rhs)
         {
-            x -= rhs.getX();
-            y -= rhs.getY();
+            x -= rhs.X();
+            y -= rhs.Y();
             return *this;
         }
 
         inline bool Point::operator==(const Point& rhs) const
         {
             bool result = true;
-            if(x != rhs.getX()) result = false;
-            if(y != rhs.getY()) result = false;
+            if(x != rhs.X()) result = false;
+            if(y != rhs.Y()) result = false;
             return result;
         }
 
@@ -95,7 +100,7 @@ namespace rlns
         inline bool Point::operator<(const Point& rhs) const
         {
             int sumthis = x + y;
-            int sumrhs = rhs.getX() + rhs.getY();
+            int sumrhs = rhs.X() + rhs.Y();
             return sumthis < sumrhs;
         }
 
@@ -113,11 +118,11 @@ namespace rlns
 
         inline std::ostream& operator<<(std::ostream& os, const Point& pt)
         {
-            os << "(" << pt.getX() << "," << pt.getY() << ")";
+            os << "(" << pt.X() << "," << pt.Y() << ")";
             return os;
         }
 
-        inline Point Point::neighbor(DirectionType dir) const
+        inline Point Point::neighbor(model::DirectionType dir) const
         {
             Point pt(*this);
             pt.shift(dir);
@@ -136,19 +141,19 @@ namespace rlns
         --------------------------------------------------------------------------------*/
         inline Point greatestX(const Point& p1, const Point& p2)
         {
-            return (p1.getX() > p2.getX()) ? p1 : p2;
+            return (p1.X() > p2.X()) ? p1 : p2;
         }
         inline Point leastX(const Point& p1, const Point& p2)
         {
-            return (p1.getX() < p2.getX()) ? p1 : p2;
+            return (p1.X() < p2.X()) ? p1 : p2;
         }
         inline Point greatestY(const Point& p1, const Point& p2)
         {
-            return (p1.getY() > p2.getY()) ? p1 : p2;
+            return (p1.Y() > p2.Y()) ? p1 : p2;
         }
         inline Point leastY(const Point& p1, const Point& p2)
         {
-            return (p1.getY() < p2.getY()) ? p1 : p2;
+            return (p1.Y() < p2.Y()) ? p1 : p2;
         }
     }
 }

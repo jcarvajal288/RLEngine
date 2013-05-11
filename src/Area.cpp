@@ -47,8 +47,8 @@ namespace rlns
         --------------------------------------------------------------------------------*/
         Point Area::getRandomPoint(TCODRandom& rand) const
         {
-            int x = rand.getInt(topLeft.getX(), bottomRight.getX());
-            int y = rand.getInt(topLeft.getY(), bottomRight.getY());
+            int x = rand.getInt(topLeft.X(), bottomRight.X());
+            int y = rand.getInt(topLeft.Y(), bottomRight.Y());
             return Point(x,y);
         }
 
@@ -69,13 +69,13 @@ namespace rlns
             Point roomBR = room.getBR();
             DirectionType direction; // which direction the other room lies
 
-            if(bottomRight.getY() >= roomTL.getY())
+            if(bottomRight.Y() >= roomTL.Y())
                 direction = SOUTH;
-            else if(bottomRight.getX() <= roomTL.getX())
+            else if(bottomRight.X() <= roomTL.X())
                 direction = EAST;
-            else if(topLeft.getY() <= roomBR.getY())
+            else if(topLeft.Y() <= roomBR.Y())
                 direction = NORTH;
-            else //(topLeft.getX() >= roomBR.getX())
+            else //(topLeft.X() >= roomBR.X())
                 direction = WEST;
 
             if(direction == NORTH)
@@ -124,22 +124,22 @@ namespace rlns
             Point columnOffset(2,2);
             Point TL = room.getTL() + columnOffset;
             Point BR = room.getBR() - columnOffset;
-            int width = BR.getX() - TL.getX();
-            int height = BR.getY() - TL.getY();
+            int width = BR.X() - TL.X();
+            int height = BR.Y() - TL.Y();
             if((width%2 && height%2))
                 return;
             int density = rand.getInt(3,4);
             //int heightDensity = rand.getInt(2,4);
 
-            for(int x=TL.getX(); x<=BR.getX(); x++)
+            for(int x=TL.X(); x<=BR.X(); x++)
             {
-                for(int y=TL.getY(); y<=BR.getY(); y++)
+                for(int y=TL.Y(); y<=BR.Y(); y++)
                 {
                     // Only on checkerboard square
                     if((x + y) & 1) continue;
                     if(x % density) continue;
                     if(y % density) continue;
-                    map->setTileID(x,y, map->getWallTileID());
+                    map->setBottomMostAt(x,y, map->tileset->getWallTileID());
                 }
             }
         }
@@ -168,7 +168,7 @@ namespace rlns
             {
                 for(int b=y; b<h; b++)
                 {
-                    map->setTileID(a,b, map->getFloorTileID());
+                    map->setBottomMostAt(a,b, map->tileset->getFloorTileID());
                 }
             }
 
@@ -203,7 +203,7 @@ namespace rlns
             {
                 for(int b=y; b<h; b++)
                 {
-                    map->setTileID(a,b, map->getFloorTileID());
+                    map->setBottomMostAt(a,b, map->tileset->getFloorTileID());
                 }
             }
 
@@ -244,13 +244,13 @@ namespace rlns
             else vert = false;
 
             // calculate room corner points
-            int tlx1, tlx2;
-            int tly1, tly2;
-            int brx1, brx2;
-            int bry1, bry2;
+            unsigned int tlx1, tlx2;
+            unsigned int tly1, tly2;
+            unsigned int brx1, brx2;
+            unsigned int bry1, bry2;
 
-            int width  = rand.getInt(minDim, 3*node.w/4, 0);
-            int height = rand.getInt(minDim, 3*node.h/4, 0);
+            unsigned int width  = rand.getInt(minDim, 3*node.w/4, 0);
+            unsigned int height = rand.getInt(minDim, 3*node.h/4, 0);
 
             if(vert)
             {
@@ -289,18 +289,18 @@ namespace rlns
             if(bry2 == map->getHeight()) --bry2;
 
             // dig the rooms
-            for(int a=tlx1; a<brx1; a++)
+            for(unsigned int a=tlx1; a<brx1; a++)
             {
-                for(int b=tly1; b<bry1; b++)
+                for(unsigned int b=tly1; b<bry1; b++)
                 {
-                    map->setTileID(a,b, map->getFloorTileID());
+                    map->setBottomMostAt(a,b, map->tileset->getFloorTileID());
                 }
             }
-            for(int a=tlx2; a<brx2; a++)
+            for(unsigned int a=tlx2; a<brx2; a++)
             {
-                for(int b=tly2; b<bry2; b++)
+                for(unsigned int b=tly2; b<bry2; b++)
                 {
-                    map->setTileID(a,b, map->getFloorTileID());
+                    map->setBottomMostAt(a,b, map->tileset->getFloorTileID());
                 }
             }
             return Area(Point(llim-1, tlim-1), Point(rlim, blim));
@@ -347,7 +347,7 @@ namespace rlns
                     // and avoids the square root function in distance
                     if(relDistance(center, Point(a,b)) < radius*radius)
                     {
-                        map->setTileID(a,b, map->getFloorTileID());
+                        map->setBottomMostAt(a,b, map->tileset->getFloorTileID());
                     }
                 }
             }
@@ -357,8 +357,8 @@ namespace rlns
             // XXX: this is currently bugged, but may be useful for making columns
             //Point offset(radius/2, radius/2);
             Point center2 = center - Point(x,y);
-            return Area(Point(center.getX()-radius, center.getY()-radius),
-                        Point(center.getX()+radius, center.getY()+radius));
+            return Area(Point(center.X()-radius, center.Y()-radius),
+                        Point(center.X()+radius, center.Y()+radius));
         }
     }
 }

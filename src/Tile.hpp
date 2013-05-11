@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdio>
 #include <iostream>
+#include <map>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -33,6 +34,7 @@ namespace rlns
         {
             // Member Variables
             private:
+                int numChars;
                 std::string light;
                 std::array<int, NUM_TILE_ACTIONS> actions;
                 std::array<bool, NUM_TILE_FLAGS> flags;
@@ -43,6 +45,7 @@ namespace rlns
             // Member Functions   
             public:
                 Tile(const int ch, 
+                     const int nc,
                      const TCODColor fg, 
                      const TCODColor bg,
                      const std::string& sd,
@@ -50,12 +53,14 @@ namespace rlns
                      const std::string& lt,
                      const std::array<int, NUM_TILE_ACTIONS> a,
                      const std::array<bool,NUM_TILE_FLAGS> f)
-                : AbstractTile(ch, fg, bg, sd, ld),
+                : AbstractTile(ch, fg, bg, sd, ld), numChars(nc),
                   light(lt), actions(a), flags(f) {}
 
+                int getNumChars()            const { return numChars; }
                 bool blocksLight()           const { return flags[BLOCKS_LIGHT]; }
                 bool blocksWalking()         const { return flags[BLOCKS_WALK]; }
                 bool isDirectionallyLinked() const { return flags[DIRECTIONALLY_LINKED]; }
+                bool hasMultipleChars()      const { return flags[MULTIPLE_CHARS]; }
                 bool isNotable()             const { return flags[NOTABLE]; }
                 std::string getLight()       const { return light; }
 
@@ -89,7 +94,7 @@ namespace rlns
                 /*--------------------------------------------------------------------------------
                     Class       : TileListener
                     Description : Constructs and executes a parser to read the data file
-                                  feature.txt.
+                                  tiles.txt.
                     Parents     : ITCODParserListener (see libtcod file parser documentation)
                     Children    : None
                     Friends     : None
@@ -122,7 +127,11 @@ namespace rlns
                 void defineSyntax();
 
             public:
-                TileParser(const std::string& n): FileParser(n) {}
+                TileParser(const std::string& n): FileParser(n)
+                {
+                    Tile::list.clear();
+                }
+
                 void run();
         };
     }

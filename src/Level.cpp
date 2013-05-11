@@ -7,50 +7,40 @@ namespace rlns
 {
     namespace model
     {
-        /*--------------------------------------------------------------------------------
-            Function    : Level::addLights
-            Description : After map generation, this function goes through the map, finds
-                          all tiles that have a light, creates that light, and adds it to
-                          the level's lights vector.
-            Inputs      : None
-            Outputs     : None
-            Return      : void
-        --------------------------------------------------------------------------------/
-        void Level::addLights()
-        {
-            lights = map->getLights(); 
-            vector<int>::iterator it, end;
-            end = lights.end();
-            for(it=lights.begin(); it!=end; ++it)
-            {
-                model::LightPtr light(new model::Light(*model::Light::findLight("Red Glow")));
-                model::GameData::get()->getCurrentLevel()->addLight(utl::Point(20, 20), otherLight);
-            }
-        }*/
-
-
+        vector<LevelPtr> Level::levels;
+        unsigned int Level::currentLevel = 0;
 
         /*--------------------------------------------------------------------------------
-            Function    : Level::generateMap
-            Description : Creates a MapGenerator and constructs the Level's Map with it.
-            Inputs      : name of the map's tileset, whether the map is approached from
-                          below (determines what stairs the party starts on)
+            Function    : Level::Level
+            Description : Constructor for the Level object.  Makes a map filled
+                          with its filler tile.
+            Inputs      : Name of a tileset
             Outputs     : None
-            Return      : void
+            Return      : None (constructor)
         --------------------------------------------------------------------------------*/
-        void Level::generateMap(const string& t, const bool ascending)
+        Level::Level(const string& tilesetName)
+        : map(new Map(Tileset::findTileset(tilesetName)))
         {
-            TilesetPtr tileset = Tileset::findTileset(t);
-
-            if(tileset->getType() == MapType::DUNGEON)
+            if(tilesetName == "Castle")
             {
-                DungeonGenerator gen(tileset);
-                map = gen.generate(ascending);
-                map->lightLights();
+                DungeonBuilder dungeonBuilder(map);
+                dungeonBuilder.buildMap();
+                areas = dungeonBuilder.getAreas();
             }
-            else
+            else if(tilesetName == "Cavern")
             {
-                utl::fatalError("Unknown Map Type: " + tileset->getType());
+                CaveBuilder caveBuilder(map);
+                caveBuilder.buildMap();
+                areas = caveBuilder.getAreas();
+            }
+
+            // add items
+            RoomFiller roomFiller(map, 1);
+            vector<AreaPtr>::const_iterator it, end;
+            it = areas.begin(); end = areas.end();
+            for(; it!=end; ++it)
+            {
+                items.push_back(roomFiller.genItem(*it));
             }
         }
 
@@ -58,9 +48,8 @@ namespace rlns
 
         /*--------------------------------------------------------------------------------
             Function    : Level::Level(RLNSZip&)
-            Description : Creates a level based on data found in the given RLNSZip buffer.
-                          Used when loading the game state from saved games.
-            Inputs      : RLNSZip buffer.
+            Description : Loads a previously saved level from the given save buffer.
+            Inputs      : RLNSZip save buffer
             Outputs     : None
             Return      : None (constructor)
         --------------------------------------------------------------------------------*/
@@ -70,97 +59,209 @@ namespace rlns
 
 
         /*--------------------------------------------------------------------------------
-            Function    : Level::getStairs()
-            Description : Returns a vector of the positions of all the stairs in the level.
-            Inputs      : None
+            Function    : Level::getTileInfo
+            Description : Returns a TileInfo struct containing the ascii character of a
+                          tile as well as its foreground and background colors.
+            Inputs      : Coordinates of the tile
             Outputs     : None
-            Return      : vector<Point>
+            Return      : TileInfo
         --------------------------------------------------------------------------------*/
-        vector<Point> Level::getStairs()
+        TileInfo Level::getTileInfo(const int x, const int y) const
         {
-            std::vector<utl::Point> stairs = getUpStairs();
-            std::vector<utl::Point> downstairs = getDownStairs();
-            stairs.insert(stairs.end(), downstairs.begin(), downstairs.end());
-            return stairs;
-        }
+            // create a blank TileInfo
+            TileInfo tileInfo = { TCODColor::fuchsia, TCODColor::fuchsia, 0 };
 
+            // get the list of tile IDs at the given coordinates
+            vector<int> tileIDs = map->at(x,y);
 
+            // fetch the light info at the given coordinates
+            //TCODColor light = getTileLightInfo(x,y);
 
-        /*--------------------------------------------------------------------------------
-            Function    : Level::checkForTileChar
-            Description : Checks if the  map has a tile with the given foreground 
-                          character at the given point.
-            Inputs      : Point, character
-            Outputs     : None
-            Return      : bool
-        --------------------------------------------------------------------------------*/
-        bool Level::checkForTileChar(const Point& pt, const char ch) const
-        {
-            vector<TilePtr> tiles = map->getTiles(pt);
-            vector<TilePtr>::const_iterator it, end = tiles.end();
+            // create iterators
+            vector<int>::const_reverse_iterator it, rend;
+            it = tileIDs.rbegin();
+            rend = tileIDs.rend();
 
-            for(it=tiles.begin(); it!=end; ++it)
+            // load the character of the topmost terrain feature
+            tileInfo.ascii = Tile::findTile(*it)->getChar();
+
+            // iterate through the tiles list, finding the topmost foreground and background colors
+            for(; it!=rend; ++it)
             {
-                if((*it)->getChar() == ch)
-                    return true;
-            }
-            return false;
-        }
-
-
-
-        /*--------------------------------------------------------------------------------
-            Function    : Level::getLights
-            Description : Returns an vector of all the light indices used by either the
-                          level itself or its occupants.
-            Inputs      : None
-            Outputs     : None
-            Return      : vector<int>
-        --------------------------------------------------------------------------------*/
-        vector<int> Level::getLights() const
-        {
-            return map->getLights();
-        }
-
-
-
-        /*--------------------------------------------------------------------------------
-            Function    : Level::removeLight
-            Description : Searches the lights vector for a light that has the same
-                          location as the given point and removes it.
-            Inputs      : Point
-            Outputs     : None
-            Return      : void
-        --------------------------------------------------------------------------------/
-        void Level::removeLight(const Point& p)
-        {
-            map<int, LightPtr>::iterator it, end;
-            end = lights.end();
-            for(it=lights.begin(); it != end; ++it)
-            {
-                if((*it)->getPosition() == p)
+                // the fuchsia color is treated as being blank for our purposes,
+                // so once we find a non-fuchsia color, we have a color we want to display
+                if(tileInfo.fgColor == TCODColor::fuchsia) 
                 {
-                    lights.erase(it);
-                    break;
+                    tileInfo.fgColor = Tile::findTile(*it)->getFgColor();
+                }
+
+                if(tileInfo.bgColor == TCODColor::fuchsia) 
+                {
+                    tileInfo.bgColor = Tile::findTile(*it)->getBgColor();
                 }
             }
-        }*/
+
+            /* finally, display the correctly colored tile
+            if(DEBUG_MODE)
+            {
+                TCODColor debuglight = TCODColor::white * 0.5f;
+                light.r = max(debuglight.r, light.r);
+                light.g = max(debuglight.g, light.g);
+                light.b = max(debuglight.b, light.b);
+            }*/
+
+            return tileInfo;
+        }
+
+
+
+        /*--------------------------------------------------------------------------------
+            Function    : Level::fetchItemsAtLocation
+            Description : Creates a vector of the items at a specified tile, REMOVES them
+                          from the items vector, and returns this vector.  This is used
+                          when characters pick up items from a location to add them to
+                          their inventory.
+            Inputs      : location to fetch items from
+            Outputs     : None
+            Return      : a vector of the items at the specified location
+        --------------------------------------------------------------------------------*/
+        vector<ItemPtr> Level::fetchItemsAtLocation(const Point& pt)
+        {
+            vector<ItemPtr> fetchedItems;
+            vector<ItemPtr> otherItems;
+            vector<ItemPtr>::iterator it, end;
+            it = items.begin(); end = items.end();
+
+            PositionEquals positionEquals(pt);
+            for(; it!=end; ++it)
+            {
+                if(positionEquals(*it))
+                {
+                    fetchedItems.push_back(*it);
+                }
+                else
+                {
+                    otherItems.push_back(*it);
+                }
+            }
+
+            items = otherItems;
+            return fetchedItems;
+        }
+
+
+
+        /*--------------------------------------------------------------------------------
+            Function    : Level::inspectTileContents
+            Description : Returns a string revealing what creatures and items are in the
+                          tile at the given point on the map.
+            Inputs      : message string, Point to inspect
+            Outputs     : None
+            Return      : void
+        --------------------------------------------------------------------------------*/
+        void Level::inspectTileContents(string& message, const Point& pt) const
+        {
+            // TODO: get a list of all of the creatures at the point
+
+            // get a list of all of the items at the point
+            vector<ItemPtr> itemsAtPt;
+            vector<ItemPtr>::const_iterator it, end;
+            it = items.begin(); end = items.end();
+
+            for(; it!=end; ++it)
+            {
+                if((*it)->getPosition() == pt)
+                {
+                    itemsAtPt.push_back(*it);
+                }
+            }
+
+            if(itemsAtPt.empty()) return;
+
+            // construct the info string
+            message = "You see ";
+            it = itemsAtPt.begin(); end = itemsAtPt.end();
+
+            for(; it!=end; ++it)
+            {
+                string part = (*it)->shortDescription();
+                if(it == end-1) part += ".";
+                else part += ", ";
+                message.append(part);
+            }
+        }
 
 
 
         /*--------------------------------------------------------------------------------
             Function    : Level::saveToDisk
-            Description : Saves the Level to the given save buffer.
-            Inputs      : RLNSZip buffer
+            Description : Saves the Level object to the given save buffer.
+            Inputs      : RLNSZip save buffer
             Outputs     : None
             Return      : void
         --------------------------------------------------------------------------------*/
         void Level::saveToDisk(RLNSZip& zip) const
         {
             map->saveToDisk(zip);
+        }
 
-            // save features
-            //saveSharedPtrContainer(features, zip);
+
+
+        /*--------------------------------------------------------------------------------
+            Function    : Level::addLevel
+            Description : Adds a new level of the given tileset to the level list.
+            Inputs      : Name of a tileset
+            Outputs     : None
+            Return      : void
+        --------------------------------------------------------------------------------*/
+        void Level::addLevel(const string& tilesetName)
+        {
+            LevelPtr newLevel(new Level(tilesetName));
+            Level::levels.push_back(newLevel);
+        }
+
+
+
+        /*--------------------------------------------------------------------------------
+            Function    : Level::saveLevelsToDisk
+            Description : Saves all of the levels to the given save buffer.
+            Inputs      : RLNSZip save buffer
+            Outputs     : None
+            Return      : void
+        --------------------------------------------------------------------------------*/
+        void Level::saveLevelsToDisk(RLNSZip& zip)
+        {
+            zip.putInt(Level::currentLevel);
+
+            vector<LevelPtr>::const_iterator it, end;
+            it = Level::levels.begin(); end = Level::levels.end();
+
+            zip.putInt(Level::levels.size());
+            for(; it!=end; ++it)
+            {
+                (*it)->saveToDisk(zip);
+            }
+        }
+
+
+
+        /*--------------------------------------------------------------------------------
+            Function    : Level::loadLevelsFromDisk
+            Description : Loads the level list from the given save buffer.
+            Inputs      : RLNSZip save buffer
+            Outputs     : None
+            Return      : void
+        --------------------------------------------------------------------------------*/
+        void Level::loadLevelsFromDisk(RLNSZip& zip)
+        {
+            currentLevel = zip.getInt();
+            int numLevels = zip.getInt();
+
+            while(numLevels --> 0)
+            {
+                LevelPtr level(new Level(zip));
+                levels.push_back(level);
+            }
         }
     }
 }

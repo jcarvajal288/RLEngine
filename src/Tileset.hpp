@@ -1,6 +1,11 @@
 #ifndef RLE_TILESET_HPP
 #define RLE_TILESET_HPP
 
+// see warning disable rationale in lcrl.hpp
+#ifdef _WIN32
+#pragma warning( disable : 4482 )
+#endif
+
 #include <string>
 #include <vector>
 
@@ -27,7 +32,7 @@ namespace rlns
              int ds;
              int nsd;
              int ewd;
-             float al;
+             TCODColor al;
              int mw;
              int mh;
              int rl;
@@ -68,7 +73,7 @@ namespace rlns
                 int n_s_door;
                 int e_w_door;
 
-                float ambientLight;
+                TCODColor ambientLight;
 
                 // Level generation specifications
                 int mapWidth;
@@ -116,7 +121,7 @@ namespace rlns
                 int getE_W_DoorID()                const    { return e_w_door;       }
 
 
-                float getAmbientLight() const    { return ambientLight;  }
+                TCODColor getAmbientLight() const    { return ambientLight;  }
 
                 int getMapWidth()       const    { return mapWidth;      }
                 int getMapHeight()      const    { return mapHeight;     }
@@ -176,7 +181,11 @@ namespace rlns
                 void defineSyntax();
 
             public:
-                TilesetParser(const std::string& n): FileParser(n) {}
+                TilesetParser(const std::string& n): FileParser(n)
+                {
+                    Tile::list.clear();
+                }
+
                 void run();
         };
     }

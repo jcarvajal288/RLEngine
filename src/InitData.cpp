@@ -3,8 +3,6 @@ using namespace std;
 
 namespace rlns
 {
-    InitDataPtr InitData::_instance(new InitData());
-
     /*--------------------------------------------------------------------------------
         Function    : InitData::error
         Description : Reports if an value is not found in txt and exits the
@@ -32,7 +30,7 @@ namespace rlns
     {
         if(!input.is_open())
         {
-            cerr << "txt not found. Aborting." << endl;
+            cerr << "init.txt not found. Aborting." << endl;
             exit(1);
         }
         string line;
@@ -64,22 +62,19 @@ namespace rlns
     }
 
 
+
     /*--------------------------------------------------------------------------------
-        Function    : InitData::get
-        Description : Public access point for the single, private instance of 
-                      InitData.
+        Function    : InitData::InitData
+        Description : Default consructor for InitData.  Sets all member variables to 0
         Inputs      : None
         Outputs     : None
-        Return      : InitDataPtr
+        Return      : None (constructor)
     --------------------------------------------------------------------------------*/
-    InitDataPtr InitData::get()
-    {
-        if(_instance == 0)
-        {
-            _instance.reset(new InitData());
-        }
-        return _instance;
-    }
+    InitData::InitData()
+    : rootWidth(0), rootHeight(0), rootTileWidth(0), rootTileHeight(0),
+      gwWidth(0), gwHeight(0), gwTileWidth(0), gwTileHeight(0),
+      commandLineHeight(0), font(""), fontWidth(0), fontHeight(0), fontgs(false),
+      fontLayout(""), mlgwRatio(0.0f), logSize(0) {}
 
 
 
@@ -87,16 +82,17 @@ namespace rlns
         Function    : InitData::readInitFile
         Description : reads the metadata from txt and processes it into the
                       metadata variables in the Yarl class. 
-        Inputs      : None
+        Inputs      : filename
         Outputs     : None
         Return      : void
     --------------------------------------------------------------------------------*/
-    void InitData::readInitFile()
+    void InitData::readInitFile(const char* filename="./init.txt")
     {
-        input.open("./init.txt"); 
+        string value, value2;
+        input.open(filename);
 
     // read WINDOWWIDTH
-        string value = readNextValue();
+        value = readNextValue();
         if(value == "NOVALUE") error("WINDOWWIDTH");
         rootWidth = atoi(value.c_str());
 
@@ -108,7 +104,11 @@ namespace rlns
     // read GAMEFONT
         value = readNextValue();
         if(value == "NOVALUE") error("GAMEFONT");
+    #ifdef _WIN32
+        font = ".\\fonts\\" + value;
+    #else
         font = "./fonts/" + value;
+    #endif
 
     // read FONTWIDTH
         value = readNextValue();
@@ -129,6 +129,24 @@ namespace rlns
         value = readNextValue();
         if(value == "NOVALUE") error("FONTLAYOUT");
         fontLayout = value;
+
+    // determine mlgwRatio
+        value = readNextValue();
+        if(value == "NOVALUE") error("MLHEIGHT");
+        value2 = readNextValue();
+        if(value2 == "NOVALUE") error("GWHEIGHT");
+        float v1 = boost::lexical_cast<float>(value);
+        float v2 = boost::lexical_cast<float>(value2);
+        mlgwRatio = v2 / (v1 + v2);
+
+    // determine pwgwRatio
+        value = readNextValue();
+        if(value == "NOVALUE") error("PWWIDTH");
+        value2 = readNextValue();
+        if(value2 == "NOVALUE") error("GWWIDTH");
+        v1 = boost::lexical_cast<float>(value); 
+        v2 = boost::lexical_cast<float>(value2);
+        pwgwRatio = v2 / (v1 + v2);
 
     // read RENDERER
         value = readNextValue();
@@ -165,19 +183,15 @@ namespace rlns
         rootTileHeight = rootHeight / fontHeight;
         
         // set Game Window size
-        gwWidth = 3 * rootWidth/4;
-        gwHeight = 2 * rootHeight/3;
+        //gwWidth = 3 * rootWidth/4;
+        //gwHeight = 2 * rootHeight/3;
+        gwWidth = static_cast<int>(rootWidth * pwgwRatio);
+        gwHeight = static_cast<int>(rootWidth * mlgwRatio);
         gwTileWidth = gwWidth / fontWidth;
         gwTileHeight = gwHeight / fontHeight;
 
         // set Command Line height
-        commandLine = gwTileHeight + 1;
-
-        // set Console size
-        consoleTL.setX(0);
-        consoleTL.setY(gwTileHeight+3); // allow room for the command line
-        consoleBR.setX(gwTileWidth);
-        consoleBR.setY(gwTileHeight + rootTileHeight - gwTileHeight);
+        commandLineHeight = gwTileHeight + 1;
     }
 
 

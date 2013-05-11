@@ -1,8 +1,10 @@
 #include "Point.hpp"
 #include <iostream>
 
-namespace rlns
+namespace rlns 
 {
+    using namespace model;
+
     namespace utl
     {
         /*--------------------------------------------------------------------------------
@@ -16,7 +18,6 @@ namespace rlns
         --------------------------------------------------------------------------------*/
         void Point::shift(DirectionType direction)
         {
-            //std::cout << "shift" << std::endl;
             switch(direction)
             {
                 case DirectionType::NORTH:
@@ -65,10 +66,10 @@ namespace rlns
         --------------------------------------------------------------------------------*/
         bool Point::withinBounds(const Point& TL, const Point& BR) const
         {
-            if(x < TL.getX()) return false;
-            if(x > BR.getX()) return false;
-            if(y < TL.getY()) return false;
-            if(y > BR.getY()) return false;
+            if(x < TL.X()) return false;
+            if(x > BR.X()) return false;
+            if(y < TL.Y()) return false;
+            if(y > BR.Y()) return false;
 
             // Success
             return true;
