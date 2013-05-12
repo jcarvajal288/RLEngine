@@ -40,7 +40,7 @@ namespace rlns
                 : map(m), depth(d) {}
 
                 ItemPtr genItem(const AreaPtr) const;
-				PartyPtr genMonsterGroup(const AreaPtr) const;
+				//PartyPtr genMonsterGroup(const AreaPtr) const;
         };
     }
 }

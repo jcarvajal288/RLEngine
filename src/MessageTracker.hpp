@@ -63,7 +63,7 @@ namespace rlns
                 size_t logSize;     
 
                 // Determines where in the message log the game will start printing
-                unsigned int start;
+                //unsigned int start;
 
             // Member Functions
             public:

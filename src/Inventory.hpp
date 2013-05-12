@@ -23,11 +23,11 @@ namespace rlns
         {
             // Member Variables
             private:
-                enum
+                enum index
                 {
                     MISC = 0,
                     NUM_INDICES = 1
-                } index;
+                };
 
                 std::vector< std::vector<ItemPtr> > contents;
 

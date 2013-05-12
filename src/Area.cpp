@@ -356,7 +356,6 @@ namespace rlns
             // of the room
             // XXX: this is currently bugged, but may be useful for making columns
             //Point offset(radius/2, radius/2);
-            Point center2 = center - Point(x,y);
             return Area(Point(center.X()-radius, center.Y()-radius),
                         Point(center.X()+radius, center.Y()+radius));
         }

@@ -34,10 +34,10 @@ namespace rlns
             Inputs      : AreaPtr
             Outputs     : None
             Return      : PartyPtr
-        --------------------------------------------------------------------------------*/
+        --------------------------------------------------------------------------------
 		PartyPtr RoomFiller::genMonsterGroup(const AreaPtr area) const		
 		{
 			
-		}
+		}*/
     }
 }
