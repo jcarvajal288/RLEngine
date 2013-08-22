@@ -36,13 +36,13 @@ namespace rlns
         // Member Variables
         private:
             InitData initData;
-            view::DisplayPtr display;
+            DisplayPtr display;
 
         // Member Functions
         private:
             bool initialize();
             void gameLoop();
-            void render(const view::DisplayPtr) const;
+            void render(const DisplayPtr) const;
             void cleanup();
 
         public:

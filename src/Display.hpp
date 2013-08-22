@@ -14,75 +14,72 @@
 
 namespace rlns
 {
-    namespace view
+    /*--------------------------------------------------------------------------------
+        Class       : Display
+        Description : Manages and draws the various parts of the game screen. Uses the
+                      Singleton design pattern.
+        Parents     : None
+        Children    : None
+        Friends     : None
+    --------------------------------------------------------------------------------*/
+    class Display
     {
-        /*--------------------------------------------------------------------------------
-            Class       : Display
-            Description : Manages and draws the various parts of the game screen. Uses the
-                          Singleton design pattern.
-            Parents     : None
-            Children    : None
-            Friends     : None
-        --------------------------------------------------------------------------------*/
-        class Display
-        {
-            // Member Variables
-            private:
-                utl::Point focalPt; // where on the map the playfield is focusing (usually the player)
+        // Member Variables
+        private:
+            Point focalPt; // where on the map the playfield is focusing (usually the player)
 
-                utl::Point _playfieldTL;
-                TCODConsolePtr _playfield;
+            Point _playfieldTL;
+            TCODConsolePtr _playfield;
 
-                utl::Point _partyBarTL;
-                TCODConsolePtr _partyBar;
+            Point _partyBarTL;
+            TCODConsolePtr _partyBar;
 
-                utl::Point _consoleTL;
-                TCODConsolePtr _console;
+            Point _consoleTL;
+            TCODConsolePtr _console;
 
-                // These values are updated before every refresh.
-                utl::Point dispTL;      // top left of the display area
-                utl::Point dispBR;      // bottom right of the display area
-                utl::Point dispCenter;  // center of the display area
-                utl::Point camTL;       // top left of what the camera is looking at 
-                utl::Point camBR;       // bottom right of what the camera is looking at
+            // These values are updated before every refresh.
+            Point dispTL;      // top left of the display area
+            Point dispBR;      // bottom right of the display area
+            Point dispCenter;  // center of the display area
+            Point camTL;       // top left of what the camera is looking at 
+            Point camBR;       // bottom right of what the camera is looking at
 
-            public:
-                MessageTrackerPtr messageTracker;
+        public:
+            MessageTrackerPtr messageTracker;
 
 
-            // Member Functions
-            private:
-                void drawLevelItems(const model::LevelPtr);
-                void drawLevelOccupants(const model::LevelPtr);
+        // Member Functions
+        private:
+            void drawLevelItems(const LevelPtr);
+            void drawLevelOccupants(const LevelPtr);
 
-            public:
-                Display(const InitData&);
+        public:
+            Display(const InitData&);
 
-                void setFocalPoint(const utl::Point& pt) { focalPt = pt; }
-                void shiftFocalPoint(const model::DirectionType);
+            void setFocalPoint(const Point& pt) { focalPt = pt; }
+            void shiftFocalPoint(const DirectionType);
 
-                void setDisplayValues();
+            void setDisplayValues();
 
-                void drawObject(const model::MapObjectPtr);
+            void drawObject(const MapObjectPtr);
 
-                void inspectTile(const model::LevelPtr, const utl::Point&);
+            void inspectTile(const LevelPtr, const Point&);
 
-                void drawPlayfield();
-                void drawPartyBar();
-                void drawConsole();
+            void drawPlayfield();
+            void drawPartyBar();
+            void drawConsole();
 
-                TCODConsolePtr playfield() { return _playfield; }
-                TCODConsolePtr partyBar() { return _partyBar; }
-                TCODConsolePtr console() { return _console; }
+            TCODConsolePtr playfield() { return _playfield; }
+            TCODConsolePtr partyBar() { return _partyBar; }
+            TCODConsolePtr console() { return _console; }
 
-                utl::Point playfieldTL() { return _playfieldTL; }
-                utl::Point partyBarTL() { return _partyBarTL; }
-                utl::Point consoleTL() { return _consoleTL; }
+            Point playfieldTL() { return _playfieldTL; }
+            Point partyBarTL() { return _partyBarTL; }
+            Point consoleTL() { return _consoleTL; }
 
-                void draw() const;
-                void refresh(); 
-        };
-    }
+            void draw() const;
+            void refresh(); 
+    };
 }
 
 #endif

@@ -12,3 +12,4 @@ e_fence
 # ignore vim backup files and swap files
 *~
 *.swp
+*.swo

@@ -1,7 +1,6 @@
 #include "lcrl.hpp"
 
 using namespace std;
-using namespace rlns::utl;
 
 namespace rlns
 {
@@ -15,29 +14,27 @@ namespace rlns
     --------------------------------------------------------------------------------*/
     bool LCRL::initialize()
     {
-        using namespace model;
-
     #ifdef _WIN32
         initData.readInitFile(".\\init.txt");
     #else
         initData.readInitFile("./init.txt");
     #endif
         initData.initRoot();
-        display.reset(new view::Display(initData));
+        display.reset(new Display(initData));
 
         // run file parsers
     #ifdef _WIN32
-        model::TileParser tileParser(".\\datafiles\\tiles.txt");
-        model::TilesetParser tilesetParser(".\\datafiles\\tileset.txt");
+        TileParser tileParser(".\\datafiles\\tiles.txt");
+        TilesetParser tilesetParser(".\\datafiles\\tileset.txt");
     #else
-        model::TileParser tileParser("./datafiles/tiles.txt");
-        model::TilesetParser tilesetParser("./datafiles/tileset.txt");
+        TileParser tileParser("./datafiles/tiles.txt");
+        TilesetParser tilesetParser("./datafiles/tileset.txt");
     #endif
         tileParser.run();
         tilesetParser.run();
 
         // create the first level
-        model::Level::addLevel("Cavern");
+        Level::addLevel("Castle");
 
         // add the player to the party
         Point pos = Level::getCurrentLevel()->getUpStairLocation();
@@ -60,13 +57,13 @@ namespace rlns
     --------------------------------------------------------------------------------*/
     void LCRL::gameLoop()
     {
-        control::EventHandler eventHandler;
+        EventHandler eventHandler;
 
         while(IS_RUNNING && !TCODConsole::isWindowClosed())
         {
             render(display);
-            control::EventType event = eventHandler.getPlayerInput();
-            control::mainEventContext(event, display);
+            EventType event = eventHandler.getPlayerInput();
+            mainEventContext(event, display);
         }
     }
 
@@ -79,7 +76,7 @@ namespace rlns
         Outputs     : None
         Return      : void
     --------------------------------------------------------------------------------*/
-    void LCRL::render(const view::DisplayPtr display) const
+    void LCRL::render(const DisplayPtr display) const
     {
         display->refresh();
         TCODConsole::flush();

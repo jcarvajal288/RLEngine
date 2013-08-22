@@ -14,18 +14,15 @@
 
 namespace rlns
 {
-    namespace control
-    {
-        // Event Functions
-        //std::string getTextInput(const view::DisplayPtr);
-        //bool movePlayer(const model::DirectionType, const view::DisplayPtr);
-        //bool pickUpItem(const view::DisplayPtr);
-        //bool showInventory(const view::DisplayPtr);
+    // Event Functions
+    //std::string getTextInput(const DisplayPtr);
+    //bool movePlayer(const model::DirectionType, const DisplayPtr);
+    //bool pickUpItem(const DisplayPtr);
+    //bool showInventory(const DisplayPtr);
 
 
-        // Event Context Functions
-        bool mainEventContext(const EventType, const view::DisplayPtr);
-    }
+    // Event Context Functions
+    bool mainEventContext(const EventType, const DisplayPtr);
 }
 
 #endif

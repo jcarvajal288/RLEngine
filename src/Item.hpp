@@ -8,8 +8,6 @@
 
 namespace rlns
 {
-    namespace model
-    {
         /*--------------------------------------------------------------------------------
             Class       : Item
             Description : Base class for all of the various items in the game.  Defines
@@ -28,7 +26,7 @@ namespace rlns
             // Member Functions
             public:
                 // temporary constructor
-                Item(const utl::Point& pos)
+                Item(const Point& pos)
                 : MapObject('*', TCODColor::white, TCODColor::fuchsia,
                                "a macguffin", "a valuable macguffin", pos),
                   name("Macguffin"), count(1) {}
@@ -39,7 +37,6 @@ namespace rlns
                 unsigned int getCount() const
                 { return count; }
         };
-    }
 }
 
 #endif

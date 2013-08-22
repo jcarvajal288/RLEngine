@@ -14,35 +14,32 @@
 
 namespace rlns
 {
-    namespace model
+    /*--------------------------------------------------------------------------------
+        Class       : RoomFiller
+        Description : Determines what items and monsters will be in a particular
+                      dungeon room.  The RoomFiller takes a map object and a depth
+                      integer as parameters.  The map object lets the RoomFiller know
+                      where it can legally place objects, while the depth integer lets
+                      it know what kind of items and monsters it should place.
+        Parents     : None
+        Children    : None
+        Friends     : None
+    --------------------------------------------------------------------------------*/
+    class RoomFiller
     {
-        /*--------------------------------------------------------------------------------
-            Class       : RoomFiller
-            Description : Determines what items and monsters will be in a particular
-                          dungeon room.  The RoomFiller takes a map object and a depth
-                          integer as parameters.  The map object lets the RoomFiller know
-                          where it can legally place objects, while the depth integer lets
-                          it know what kind of items and monsters it should place.
-            Parents     : None
-            Children    : None
-            Friends     : None
-        --------------------------------------------------------------------------------*/
-        class RoomFiller
-        {
-            // Member Variables
-            private:
-                MapPtr map;
-                unsigned int depth;
+        // Member Variables
+        private:
+            MapPtr map;
+            unsigned int depth;
 
-            // Member Functions
-            public:
-                RoomFiller(const MapPtr m, const unsigned int d) 
-                : map(m), depth(d) {}
+        // Member Functions
+        public:
+            RoomFiller(const MapPtr m, const unsigned int d) 
+            : map(m), depth(d) {}
 
-                ItemPtr genItem(const AreaPtr) const;
-				//PartyPtr genMonsterGroup(const AreaPtr) const;
-        };
-    }
+            ItemPtr genItem(const AreaPtr) const;
+            //PartyPtr genMonsterGroup(const AreaPtr) const;
+    };
 }
 
 #endif

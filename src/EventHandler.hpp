@@ -17,34 +17,31 @@
 
 namespace rlns
 {
-    namespace control
+    /*--------------------------------------------------------------------------------
+        Class       : EventHandler
+        Description : Manages all the interaction between the game and the user.
+                      Interprets keystrokes and (possibly) mouse events.  
+        Parents     : None
+        Children    : None
+        Friends     : None
+    --------------------------------------------------------------------------------*/
+    class EventHandler
     {
-        /*--------------------------------------------------------------------------------
-            Class       : EventHandler
-            Description : Manages all the interaction between the game and the user.
-                          Interprets keystrokes and (possibly) mouse events.  
-            Parents     : None
-            Children    : None
-            Friends     : None
-        --------------------------------------------------------------------------------*/
-        class EventHandler
-        {
-            // Member Functions
-            private:
-                EventType promptDirection() const;
-                EventType getDirection(const TCOD_key_t) const;
+        // Member Functions
+        private:
+            EventType promptDirection() const;
+            EventType getDirection(const TCOD_key_t) const;
 
-                EventType systemCommands(const TCOD_key_t) const;
-                EventType letterCommands(const TCOD_key_t) const;
+            EventType systemCommands(const TCOD_key_t) const;
+            EventType letterCommands(const TCOD_key_t) const;
 
-            public:
-                EventHandler() {}
+        public:
+            EventHandler() {}
 
-                EventType keyToEvent(const TCOD_key_t) const;
+            EventType keyToEvent(const TCOD_key_t) const;
 
-                EventType getPlayerInput() const;
-        };
-    }
+            EventType getPlayerInput() const;
+    };
 }
 
 #endif

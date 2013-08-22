@@ -13,47 +13,44 @@
 
 namespace rlns
 {
-    namespace model
+    /*--------------------------------------------------------------------------------
+        Class       : Actor
+        Description : Represents players, creatures, etc.  Essentially anything that
+                      has stats and can move.
+        Parents     : MapObject
+        Children    : None
+        Friends     : InventoryScreen
+    --------------------------------------------------------------------------------*/
+    class Actor: public MapObject
     {
-        /*--------------------------------------------------------------------------------
-            Class       : Actor
-            Description : Represents players, creatures, etc.  Essentially anything that
-                          has stats and can move.
-            Parents     : MapObject
-            Children    : None
-            Friends     : InventoryScreen
-        --------------------------------------------------------------------------------*/
-        class Actor: public MapObject
-        {
-            // Member Variables
-            private:
-                Inventory inventory;
+        // Member Variables
+        private:
+            Inventory inventory;
 
-            // Member Functions
-            public:
-                Actor(const utl::Point&, const int, const TCODColor&);
+        // Member Functions
+        public:
+            Actor(const Point&, const int, const TCODColor&);
 
-                virtual ~Actor() {}
+            virtual ~Actor() {}
 
-                void giveItem(const ItemPtr);
+            void giveItem(const ItemPtr);
 
-                void shiftPosition(const DirectionType); 
+            void shiftPosition(const DirectionType); 
 
-                MovementType getMovementType() const 
-                { return MovementType::WALKING; }
+            MovementType getMovementType() const 
+            { return MovementType::WALKING; }
 
-                friend class InventoryScreen;
-        };
+            friend class InventoryScreen;
+    };
 
 
-        // Inline Functions
+    // Inline Functions
 
-        inline void Actor::shiftPosition(const DirectionType dir)
-        {
-            utl::Point pt = getPosition();
-            pt.shift(dir);
-            setPosition(pt);
-        }
+    inline void Actor::shiftPosition(const DirectionType dir)
+    {
+        Point pt = getPosition();
+        pt.shift(dir);
+        setPosition(pt);
     }
 }
 
