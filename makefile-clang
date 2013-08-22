@@ -25,6 +25,7 @@ CXX_OBJS = \
 	$(OBJDIR)/Area.o \
 	$(OBJDIR)/CaveBuilder.o \
 	$(OBJDIR)/CheckedSave.o \
+	$(OBJDIR)/Dice.o \
 	$(OBJDIR)/Display.o \
 	$(OBJDIR)/DungeonBuilder.o \
 	$(OBJDIR)/Events.o \
@@ -32,7 +33,6 @@ CXX_OBJS = \
 	$(OBJDIR)/InitData.o \
 	$(OBJDIR)/Inventory.o \
 	$(OBJDIR)/Level.o \
-	$(OBJDIR)/lcrl.o \
 	$(OBJDIR)/Map.o \
 	$(OBJDIR)/MapBuilder.o \
 	$(OBJDIR)/MenuScreen.o \
@@ -43,7 +43,8 @@ CXX_OBJS = \
 	$(OBJDIR)/Tile.o \
 	$(OBJDIR)/Tileset.o \
 	$(OBJDIR)/Types.o \
-	$(OBJDIR)/Utility.o 
+	$(OBJDIR)/Utility.o \
+	$(OBJDIR)/VitalStats.o 
 
 
 CXX_DEBUG_OBJS = \
@@ -52,6 +53,7 @@ CXX_DEBUG_OBJS = \
 	$(OBJDIR)/Area.dbg.o \
 	$(OBJDIR)/CaveBuilder.dbg.o \
 	$(OBJDIR)/CheckedSave.dbg.o \
+	$(OBJDIR)/Dice.dbg.o \
 	$(OBJDIR)/Display.dbg.o \
 	$(OBJDIR)/DungeonBuilder.dbg.o \
 	$(OBJDIR)/Events.dbg.o \
@@ -59,7 +61,6 @@ CXX_DEBUG_OBJS = \
 	$(OBJDIR)/InitData.dbg.o \
 	$(OBJDIR)/Inventory.dbg.o \
 	$(OBJDIR)/Level.dbg.o \
-	$(OBJDIR)/lcrl.dbg.o \
 	$(OBJDIR)/Map.dbg.o \
 	$(OBJDIR)/MapBuilder.dbg.o \
 	$(OBJDIR)/MenuScreen.dbg.o \
@@ -70,18 +71,22 @@ CXX_DEBUG_OBJS = \
 	$(OBJDIR)/Tile.dbg.o \
 	$(OBJDIR)/Tileset.dbg.o \
 	$(OBJDIR)/Types.dbg.o \
-	$(OBJDIR)/Utility.dbg.o
+	$(OBJDIR)/Utility.dbg.o \
+	$(OBJDIR)/VitalStats.dbg.o
 
 all : release debug
 
 release : $(CXX_OBJS)
-	$(CXX) $(CXX_OBJS) -o $@ $(LINKFLAGS)
+	$(CXX) $(CXX_OBJS) $(OBJDIR)/lcrl.o -o $@ $(LINKFLAGS)
 
 debug : $(CXX_DEBUG_OBJS)
-	$(CXX) $(CXX_DEBUG_OBJS) -o $@ $(LINKDEBUGFLAGS)
+	$(CXX) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.dbg.o -o $@ $(LINKDEBUGFLAGS)
+
+test : $(CXX_DEBUG_OBJS)
+	$(CXX) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrlTest.dbg.o -o $@ $(LINKDEBUGFLAGS)
 
 clean :
-	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS)
+	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o $(OBJDIR)/lcrlTest.dbg.o
 
 cleanAll :
-	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) release debug
+	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o $(OBJDIR)/lcrlTest.dbg.o release debug
