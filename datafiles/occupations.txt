@@ -1,0 +1,101 @@
+Alchemist:Staff:
+Animal trainer:Club:
+Armorer:Hammer:
+Astrologer:Dagger:
+Barber:Razor:
+Beadle:Staff:
+Beekeeper:Staff:
+Blacksmith:Hammer:
+Butcher:Cleaver:
+Caravan guard:Short sword:
+Cheesemaker:Cudgel:
+Cobbler:Awl:
+Confidence artist:Dagger:
+Cooper:Crowbar:
+Costermonger:Knife:
+Cutpurse:Dagger:
+Ditch digger:Shovel:
+Dwarven apothecarist:Cudgel:
+Dwarven blacksmith:Hammer:
+Dwarven blacksmith:Hammer:
+Dwarven chest-maker:Chisel:
+Dwarven herder:Staff:
+Dwarven miner:Pick:
+Dwarven miner:Pick:
+Dwarven mushroom-farmer:Shovel:
+Dwarven rat-catcher:Club:
+Dwarven stonemason:Hammer:
+Dwarven stonemason:Hammer:
+Elven artisan:Staff:
+Elven barrister:Quill:
+Elven chandler:Scissors:
+Elven falconer:Dagger:
+Elven forester:Staff:
+Elven forester:Staff:
+Elven glassblower:Hammer:
+Elven navigator:Bow:
+Elven sage:Dagger:
+Elven sage:Dagger:
+Potato Farmer:Pitchfork:
+Potato Farmer:Pitchfork:
+Wheat Farmer:Pitchfork:
+Turnip Farmer:Pitchfork:
+Corn Farmer:Pitchfork:
+Rice Farmer:Pitchfork:
+Parsnip Farmer:Pitchfork:
+Radish Farmer:Pitchfork:
+Rutabaga Farmer:Pitchfork:
+Fortune-teller:Dagger:
+Gambler:Club:
+Gongfarmer:Trowel:
+Grave digger:Shovel:
+Grave digger:Shovel:
+Guild beggar:Sling:
+Guild beggar:Sling:
+Halfling chicken butcher:Hand axe:
+Halfling dyer:Staff:
+Halfling dyer:Staff:
+Halfling glovemaker:Awl:
+Halfling gypsy:Sling:
+Halfling haberdasher:Scissors:
+Halfling mariner:Knife:
+Halfling moneylender:Short sword:
+Halfling trader:Short sword:
+Halfling vagrant:Club:
+Healer:Club:
+Herbalist:Club:
+Herder:Staff:
+Hunter:Shortbow:
+Hunter:Shortbow:
+Indentured servant:Staff:
+Jester:Dart:
+Jeweler:Dagger:
+Locksmith:Dagger:
+Mendicant:Club:
+Mercenary:Longsword:Hide Armor
+Merchant:Dagger:
+Miller:Club:
+Baker:Club:
+Minstrel:Dagger:
+Noble:Longsword:
+Orphan:Club:
+Ostler:Staff:
+Outlaw:Short sword:Leather Armor
+Rope maker:Knife:
+Scribe:Dart:
+Shaman:Mace:
+Slave:Club:
+Smuggler:Sling:
+Soldier:Spear:Shield
+Squire:Longsword:
+Squire:Longsword:
+Tax collector:Longsword:
+Trapper:Sling:
+Trapper:Sling:
+Urchin:Stick:
+Wainwright:Club:
+Weaver:Dagger:
+Wizard’s apprentice:Dagger:
+Woodcutter:Handaxe:
+Woodcutter:Handaxe:
+Woodcutter:Handaxe:

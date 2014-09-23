@@ -1,0 +1,14 @@
+Soldier - starts with firearms training, pistol, longarm, (flak jacket?)
+
+Gangster - high hand-to-hand combat skills, proficiency with bats, knives.  Small chance for Thompson. Underworld connections.
+
+Detective - Firearms training, pistol, fedora, flashlight.  Decent money.
+
+Scientist - high research skills, no weapons training, decent money, perhaps scientific tools?  Good at learning magic.
+
+Occultist - only class that starts with magic. Low money, no weapons training.  High chance to go mad.
+
+Doctor - Good at healing.  High money.  Little weapons training.
+
+Eccentric - Random skills, random inventory.  Low chance to have a magic item or two.
+

@@ -2,6 +2,7 @@
 release
 debug
 e_fence
+test
 
 # ignore object files
 *.o
@@ -13,3 +14,6 @@ e_fence
 *~
 *.swp
 *.swo
+
+#ignore shared libraries
+*.so

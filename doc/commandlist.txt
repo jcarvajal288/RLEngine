@@ -1,0 +1,18 @@
+E - mnemonic: "Equip" - command for dealing with inventory
+<e>   - bring up inventory screen
+<E>   - bring up equipped items screen
+
+R - mnemonic: "Rest"
+<R>   - rest for x turns
+
+A - mnemonic: "Attack"
+<a>   - attack with weapon in x cardinal direction
+<A>   - designate target
+
+C - mnemonic: "Close"
+<c>   - signal OPEN  (ironic, but most of the time you'll use c to close doors)
+
+D - mnemonic: "Drop"
+<d>   - pick up item (also ironic, but it's the best mnemonic I could think up)
+<D>   - drop item from inventory  (possibly put this as a <d> command in the inventory screen)
+ 

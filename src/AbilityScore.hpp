@@ -3,13 +3,13 @@
 
 namespace rlns
 {
-    class AbilityScore
+    class Score
     {
         public:
-            AbilityScore()
+            Score()
             : max(0), current(0) {}
 
-            AbilityScore(const int n)
+            Score(const int n)
             : max(n), current(n) {}
 
             int getCurrent() const { return current; }
@@ -17,9 +17,25 @@ namespace rlns
 
             void setMaxAndCurrent(const int n) { max = n; current = n; }
 
-        private:
+        protected:
             int max;
             int current;
+    };
+
+
+    int validateScore(const int n);
+
+    class AbilityScore: public Score
+    {
+        public:
+            AbilityScore()
+            : Score(10) {}
+            
+            AbilityScore(const int n)
+            : Score(validateScore(n)) {}
+
+            int mod() const;
+            void setMaxAndCurrent(const int n) { max = validateScore(n); current = max; }
     };
 }
 

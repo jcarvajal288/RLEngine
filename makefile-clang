@@ -20,6 +20,7 @@ $(OBJDIR)/%.dbg.o : $(SRCDIR)/%.cpp
  
 
 CXX_OBJS = \
+	$(OBJDIR)/AbilityScore.o \
 	$(OBJDIR)/AbstractTile.o \
 	$(OBJDIR)/Actor.o \
 	$(OBJDIR)/Area.o \
@@ -48,6 +49,7 @@ CXX_OBJS = \
 
 
 CXX_DEBUG_OBJS = \
+	$(OBJDIR)/AbilityScore.dbg.o \
 	$(OBJDIR)/AbstractTile.dbg.o \
 	$(OBJDIR)/Actor.dbg.o \
 	$(OBJDIR)/Area.dbg.o \
@@ -74,19 +76,22 @@ CXX_DEBUG_OBJS = \
 	$(OBJDIR)/Utility.dbg.o \
 	$(OBJDIR)/VitalStats.dbg.o
 
+CXX_TEST_OBJS = \
+	$(OBJDIR)/test.dbg.o
+
 all : release debug
 
-release : $(CXX_OBJS)
+release : $(OBJDIR)/lcrl.o $(CXX_OBJS)
 	$(CXX) $(CXX_OBJS) $(OBJDIR)/lcrl.o -o $@ $(LINKFLAGS)
 
-debug : $(CXX_DEBUG_OBJS)
+debug : $(OBJDIR)/lcrl.dbg.o $(CXX_DEBUG_OBJS)
 	$(CXX) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.dbg.o -o $@ $(LINKDEBUGFLAGS)
 
-test : $(CXX_DEBUG_OBJS)
-	$(CXX) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrlTest.dbg.o -o $@ $(LINKDEBUGFLAGS)
+test : $(CXX_DEBUG_OBJS) $(CXX_TEST_OBJS)
+	$(CXX) $(CXX_DEBUG_OBJS) $(CXX_TEST_OBJS) -o $@ $(LINKDEBUGFLAGS)
 
 clean :
-	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o $(OBJDIR)/lcrlTest.dbg.o
+	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o 
 
 cleanAll :
-	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o $(OBJDIR)/lcrlTest.dbg.o release debug
+	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o 
