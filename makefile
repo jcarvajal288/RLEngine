@@ -1,41 +1,32 @@
 SRCDIR = ./src
-TESTSRCDIR = ./test
-LIBTCODDIR = ../libtcod-1.5.1
-GTESTDIR = /usr/local/gtest-1.6.0
-INCDIR = $(LIBTCODDIR)/include
-SODIR  = $(LIBTCODDIR)
-BOOSTDIR = /usr/local/boost_1_53_0
-BOOSTSO = $(BOOSTDIR)/stage/lib
 OBJDIR = ./obj
-CXXFLAGS = -I$(INCDIR) -I$(SRCDIR) -I$(BOOSTDIR) -Wall -W -std=c++0x -O2 -fno-strict-aliasing
-CXXDEBUGFLAGS = -I$(INCDIR) -I$(SRCDIR) -I$(BOOSTDIR) -Wall -W -std=c++0x -g -O0
-TESTFLAGS = -I$(GTESTDIR)/include -I$(GTESTDIR) $(CXXFLAGS)
-TESTDEBUGFLAGS = -I$(GTESTDIR)/include -I$(GTESTDIR) $(CXXDEBUGFLAGS)
+LIBTCODDIR = ../libtcod-1.5.1
+SODIR  = $(LIBTCODDIR)
+INCDIR = $(LIBTCODDIR)/include
+CXXFLAGS = -I$(INCDIR) -std=c++11 -O1 
+CXXDEBUGFLAGS = -I$(INCDIR) -std=c++11 -g -O0
+"WARNINGFLAGS = -Werror -Weverything -Wno-weak-vtables -Wno-c++98-compat -Wno-padded -Wno-global-constructors -Wno-exit-time-destructors
+WARNINGFLAGS = -Wall
 LINKFLAGS = -L$(BOOSTSO) -Wl,-rpath,$(BOOSTSO) -L$(LIBTCODDIR) -ltcod -ltcodxx -Wl,-rpath,$(SODIR)
 LINKDEBUGFLAGS = -L$(BOOSTSO) -Wl,-rpath,$(BOOSTSO) -L$(LIBTCODDIR) -ltcod_debug -ltcodxx_debug -Wl,-rpath,$(SODIR)
-GTESTLINKFLAGS = -L$(OBJDIR) -Wl,-rpath,$(OBJDIR) -lgtest
-CC = gcc
-CXX = ccache g++
-.SUFFIXES: .o .h .c .hpp .cpp .cc
+CXX = clang++
+.SUFFIXES: .o .h .c .hpp .cpp
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $< 
+	$(CXX) $(CXXFLAGS) $(WARNINGFLAGS) -o $@ -c $< 
 
 $(OBJDIR)/%.dbg.o : $(SRCDIR)/%.cpp
-	$(CXX) $(CXXDEBUGFLAGS) -o $@ -c $<
+	$(CXX) $(CXXDEBUGFLAGS) $(WARNINGFLAGS) -o $@ -c $<
  
-$(OBJDIR)/%.o : $(TESTSRCDIR)/%.cpp
-	$(CXX) $(TESTFLAGS) -o $@ -c $< 
-
-$(OBJDIR)/%.dbg.o : $(TESTSRCDIR)/%.cpp
-	$(CXX) $(TESTDEBUGFLAGS) -o $@ -c $<
 
 CXX_OBJS = \
+	$(OBJDIR)/AbilityScore.o \
 	$(OBJDIR)/AbstractTile.o \
 	$(OBJDIR)/Actor.o \
 	$(OBJDIR)/Area.o \
 	$(OBJDIR)/CaveBuilder.o \
 	$(OBJDIR)/CheckedSave.o \
+	$(OBJDIR)/Dice.o \
 	$(OBJDIR)/Display.o \
 	$(OBJDIR)/DungeonBuilder.o \
 	$(OBJDIR)/Events.o \
@@ -53,28 +44,18 @@ CXX_OBJS = \
 	$(OBJDIR)/Tile.o \
 	$(OBJDIR)/Tileset.o \
 	$(OBJDIR)/Types.o \
-	$(OBJDIR)/Utility.o 
+	$(OBJDIR)/Utility.o \
+	$(OBJDIR)/VitalStats.o 
 
-CXX_TEST_OBJS = \
-	$(OBJDIR)/gtest-all.o \
-	$(OBJDIR)/gtest_main.o \
-	$(OBJDIR)/CaveBuilder_unittest.o \
-	$(OBJDIR)/Display_unittest.o \
-	$(OBJDIR)/DungeonBuilder_unittest.o \
-	$(OBJDIR)/EventHandler_unittest.o \
-	$(OBJDIR)/InitData_unittest.o \
-	$(OBJDIR)/Map_unittest.o \
-	$(OBJDIR)/Tile_unittest.o \
-	$(OBJDIR)/Tileset_unittest.o \
-	$(OBJDIR)/Utility_unittest.o \
-	$(OBJDIR)/UnitTest.o 
 
 CXX_DEBUG_OBJS = \
+	$(OBJDIR)/AbilityScore.dbg.o \
 	$(OBJDIR)/AbstractTile.dbg.o \
 	$(OBJDIR)/Actor.dbg.o \
 	$(OBJDIR)/Area.dbg.o \
 	$(OBJDIR)/CaveBuilder.dbg.o \
 	$(OBJDIR)/CheckedSave.dbg.o \
+	$(OBJDIR)/Dice.dbg.o \
 	$(OBJDIR)/Display.dbg.o \
 	$(OBJDIR)/DungeonBuilder.dbg.o \
 	$(OBJDIR)/Events.dbg.o \
@@ -92,45 +73,25 @@ CXX_DEBUG_OBJS = \
 	$(OBJDIR)/Tile.dbg.o \
 	$(OBJDIR)/Tileset.dbg.o \
 	$(OBJDIR)/Types.dbg.o \
-	$(OBJDIR)/Utility.dbg.o
+	$(OBJDIR)/Utility.dbg.o \
+	$(OBJDIR)/VitalStats.dbg.o
 
-CXX_DEBUG_TEST_OBJS = \
-	$(OBJDIR)/gtest-all.o \
-	$(OBJDIR)/gtest_main.o \
-	$(OBJDIR)/CaveBuilder_unittest.dbg.o \
-	$(OBJDIR)/Display_unittest.dbg.o \
-	$(OBJDIR)/DungeonBuilder_unittest.dbg.o \
-	$(OBJDIR)/EventHandler_unittest.dbg.o \
-	$(OBJDIR)/InitData_unittest.dbg.o \
-	$(OBJDIR)/Map_unittest.dbg.o \
-	$(OBJDIR)/Tile_unittest.dbg.o \
-	$(OBJDIR)/Tileset_unittest.dbg.o \
-	$(OBJDIR)/Utility_unittest.dbg.o \
-	$(OBJDIR)/UnitTest.dbg.o
+CXX_TEST_OBJS = \
+	$(OBJDIR)/test.dbg.o
 
-all : release debug 
-
-lib : $(OBJDIR)/gtest-all.o
-	ar -rv $(OBJDIR)/libgtest.a $(OBJDIR)/gtest-all.o
+all : release debug
 
 release : $(OBJDIR)/lcrl.o $(CXX_OBJS)
-	$(CXX) $(OBJDIR)/lcrl.o $(CXX_OBJS) -o $@ $(LINKFLAGS)
+	$(CXX) $(CXX_OBJS) $(OBJDIR)/lcrl.o -o $@ $(LINKFLAGS)
 
 debug : $(OBJDIR)/lcrl.dbg.o $(CXX_DEBUG_OBJS)
-	$(CXX) $(OBJDIR)/lcrl.dbg.o $(CXX_DEBUG_OBJS) -o $@ $(LINKDEBUGFLAGS)
+	$(CXX) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.dbg.o -o $@ $(LINKDEBUGFLAGS)
 
-test-release : $(CXX_OBJS) $(CXX_TEST_OBJS)
-	$(CXX) $(CXX_OBJS) $(CXX_TEST_OBJS) -o $@ $(LINKFLAGS) $(GTESTLINKFLAGS)
-
-test-debug : $(CXX_DEBUG_OBJS) $(CXX_DEBUG_TEST_OBJS)
-	$(CXX) $(CXX_DEBUG_OBJS) $(CXX_DEBUG_TEST_OBJS) -o $@ $(LINKDEBUGFLAGS) $(GTESTLINKFLAGS)
+test : $(CXX_DEBUG_OBJS) $(CXX_TEST_OBJS)
+	$(CXX) $(CXX_DEBUG_OBJS) $(CXX_TEST_OBJS) -o $@ $(LINKDEBUGFLAGS)
 
 clean :
-	\rm -f $(CXX_OBJS) $(CXX_TEST_OBJS) $(CXX_DEBUG_OBJS) $(CXX_DEBUG_TEST_OBJS) 
+	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o 
 
 cleanAll :
-	\rm -f $(CXX_OBJS) $(CXX_TEST_OBJS) $(CXX_DEBUG_OBJS) $(CXX_DEBUG_TEST_OBJS) release debug test-release test-debug
-
-cleanSaves :
-	\rm -f ./save/*.sav
-
+	\rm -f $(CXX_OBJS) $(CXX_DEBUG_OBJS) $(CXX_DEBUG_OBJS) $(OBJDIR)/lcrl.o $(OBJDIR)/lcrl.dbg.o 
