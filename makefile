@@ -3,8 +3,9 @@ OBJDIR = ./obj
 LIBTCODDIR = ../libtcod-1.5.1
 SODIR  = $(LIBTCODDIR)
 INCDIR = $(LIBTCODDIR)/include
-CXXFLAGS = -I$(INCDIR) -std=c++11 -O1 
-CXXDEBUGFLAGS = -I$(INCDIR) -std=c++11 -g -O0
+BOOSTDIR = /usr/include/boost_1_56_0
+CXXFLAGS = -I$(INCDIR) -I$(BOOSTDIR) -std=c++11 -O1 
+CXXDEBUGFLAGS = -I$(INCDIR) -I$(BOOSTDIR) -std=c++11 -g -O0
 "WARNINGFLAGS = -Werror -Weverything -Wno-weak-vtables -Wno-c++98-compat -Wno-padded -Wno-global-constructors -Wno-exit-time-destructors
 WARNINGFLAGS = -Wall
 LINKFLAGS = -L$(BOOSTSO) -Wl,-rpath,$(BOOSTSO) -L$(LIBTCODDIR) -ltcod -ltcodxx -Wl,-rpath,$(SODIR)
