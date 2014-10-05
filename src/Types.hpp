@@ -115,6 +115,7 @@ namespace rlns
     class AbstractTile;
     class Actor;
     class Area;
+    class Creature;
     class DieRoller;
     class Feature;
     class GameData;
@@ -135,6 +136,7 @@ namespace rlns
     typedef boost::shared_ptr<AbstractTile> AbstractTilePtr;
     typedef boost::shared_ptr<Actor> ActorPtr;
     typedef boost::shared_ptr<Area> AreaPtr;
+    typedef boost::shared_ptr<Creature> CreaturePtr;
     typedef boost::shared_ptr<DieRoller> DieRollerPtr;
     typedef boost::shared_ptr<Feature> FeaturePtr;
     typedef boost::shared_ptr<GameData> GameDataPtr;

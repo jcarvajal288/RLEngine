@@ -29,9 +29,11 @@ namespace rlns
     #else
         TileParser tileParser("./datafiles/tiles.txt");
         TilesetParser tilesetParser("./datafiles/tileset.txt");
+        CreatureParser creatureParser("./datafiles/creatures.txt");
     #endif
         tileParser.run();
         tilesetParser.run();
+        creatureParser.run();
 
         // create the first level
         Level::addLevel("Castle");

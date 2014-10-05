@@ -27,6 +27,7 @@ CXX_OBJS = \
 	$(OBJDIR)/Area.o \
 	$(OBJDIR)/CaveBuilder.o \
 	$(OBJDIR)/CheckedSave.o \
+	$(OBJDIR)/Creature.o \
 	$(OBJDIR)/Dice.o \
 	$(OBJDIR)/Display.o \
 	$(OBJDIR)/DungeonBuilder.o \
@@ -56,6 +57,7 @@ CXX_DEBUG_OBJS = \
 	$(OBJDIR)/Area.dbg.o \
 	$(OBJDIR)/CaveBuilder.dbg.o \
 	$(OBJDIR)/CheckedSave.dbg.o \
+	$(OBJDIR)/Creature.dbg.o \
 	$(OBJDIR)/Dice.dbg.o \
 	$(OBJDIR)/Display.dbg.o \
 	$(OBJDIR)/DungeonBuilder.dbg.o \

@@ -1,0 +1,31 @@
+/*
+Creatures.txt
+
+Data file for all NPC statblocks
+
+Creature "Creature Name"
+{
+    // display properties
+    character = ascii code that portrays this creature
+    fgColor = color of the character
+    shortdesc = a short phrase describing this creature
+    longdesc = a paragraph describing this creature
+    
+    // game properties
+    hp = amount of hitpoints
+    
+}
+
+*/
+
+Creature "Goblin"
+{
+    // display properties
+    character = 103 // 'g'
+    fgColor = "91,143,0"
+    shortdesc = "a goblin"
+    longdesc = "a small, dirty humanoid"
+
+    // game properties
+    hp = 20
+}

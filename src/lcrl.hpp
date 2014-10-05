@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "Actor.hpp"
+#include "Creature.hpp"
 #include "Display.hpp"
 #include "Events.hpp"
 #include "EventHandler.hpp"
