@@ -30,12 +30,12 @@ namespace rlns
         // Member Variables
         private:
             MapPtr map;
-            unsigned int depth;
+            //unsigned int depth;
 
         // Member Functions
         public:
             RoomFiller(const MapPtr m, const unsigned int d) 
-            : map(m), depth(d) {}
+            : map(m) /*,depth(d)*/ {}
 
             ItemPtr genItem(const AreaPtr) const;
             //PartyPtr genMonsterGroup(const AreaPtr) const;

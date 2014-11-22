@@ -15,9 +15,9 @@ namespace rlns
         public:
             VitalStats()
             : name(""), title(""), occupation(""),
-              alignment(AlignmentType::LAWFUL),
-              characterClass(CharacterClassType::WARRIOR),
-              level(0), xp(0),
+              //alignment(AlignmentType::LAWFUL),
+              //characterClass(CharacterClassType::WARRIOR),
+              //level(0), xp(0),
               STR(0), AGI(0), STA(0), PER(0), INT(0), LUCK(0) {}
 
             AbilityScore getSTR() const { return STR; }
@@ -40,10 +40,10 @@ namespace rlns
             std::string name;
             std::string title;
             std::string occupation;
-            AlignmentType alignment;
-            CharacterClassType characterClass;
-            int level;
-            int xp;
+            //AlignmentType alignment;
+            //CharacterClassType characterClass;
+            //int level;
+            //int xp;
 
             AbilityScore STR;
             AbilityScore AGI;

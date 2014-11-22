@@ -61,12 +61,12 @@ namespace rlns
             size_t logSize;     
 
             // Determines where in the message log the game will start printing
-            unsigned int start;
+            //unsigned int start;
 
         // Member Functions
         public:
             MessageTracker(const int ls=100)
-            : logSize(ls), start(0) {}
+            : logSize(ls)/*, start(0)*/ {}
 
             void setPrompt(const std::string& p) 
             { prompt = p; }
